@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /billing/
 
 Sitemap: https://assistantinjapan.github.io/sitemap.xml

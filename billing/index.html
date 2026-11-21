@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="color-scheme" content="light">
+  <title>Billing tool — Assistant in Japan</title>
+  <style>
+:root {
+  --indigo: #1a2148;
+  --indigo-2: #2b3570;
+  --indigo-soft: #e8eaf4;
+  --vermilion: #c53a2a;
+  --vermilion-dark: #9e2e22;
+  --paper: #f7f3ec;
+  --paper-2: #efe9de;
+  --white: #fffdf9;
+  --ink: #1d2030;
+  --muted: #5a5f73;
+  --line: #e3ddd2;
+  --ok: #1f6b4a;
+  --font: "Noto Sans CJK JP", "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", YuGothic, Meiryo, "Segoe UI", Arial, Helvetica, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+.top {
+  background: var(--indigo);
+  color: #fff;
+  border-bottom: 4px solid var(--vermilion);
+}
+.top-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.brand-block { display: flex; flex-direction: column; }
+.brand-block .eyebrow {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #c9cee6;
+}
+.brand-block h1 {
+  margin: 2px 0 0;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+.brand-block .sub { margin: 2px 0 0; font-size: 12px; color: #c9cee6; }
+.top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 18px 16px;
+}
+.card h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: var(--indigo);
+}
+.hint { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+label { display: block; font-weight: 650; font-size: 13px; color: var(--indigo); margin: 0 0 4px; }
+.field { margin-bottom: 12px; }
+input[type="text"], input[type="email"], input[type="date"], input[type="time"], input[type="number"], select, textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1.5px solid #cfc8bb;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+}
+input:focus, select:focus, textarea:focus {
+  outline: 3px solid var(--vermilion);
+  outline-offset: 1px;
+  border-color: var(--indigo);
+}
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.seg {
+  display: flex;
+  border: 1.5px solid var(--indigo);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.seg label {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  padding: 7px 6px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fff;
+  color: var(--indigo);
+  font-weight: 650;
+}
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label:has(input:checked), .seg label.active {
+  background: var(--indigo);
+  color: #fff;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+button, .btn {
+  font: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  border: 0;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+.btn-primary { background: var(--vermilion); color: #fff; }
+.btn-primary:hover { background: var(--vermilion-dark); }
+.btn-ghost { background: transparent; color: var(--indigo); border: 1.5px solid var(--indigo); }
+.btn-ghost:hover { background: var(--indigo); color: #fff; }
+.btn-light { background: #fff; color: var(--indigo); border: 1px solid #9aa0c3; }
+.live {
+  background: var(--indigo);
+  color: #fff;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+.live h2 { margin: 0 0 8px; font-size: 16px; color: #fff; }
+.live .rule { margin: 0 0 12px; font-size: 12px; color: #c9cee6; }
+.live table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.live td { padding: 4px 0; }
+.live td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.live .total-row td { padding-top: 8px; font-size: 22px; font-weight: 800; color: #fff; }
+.live .min-on { color: #ffd2cc; font-weight: 700; }
+.live .min-off { color: #9dccb8; }
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: #c53a2a;
+  color: #fff;
+}
+.badge.ok { background: #1f6b4a; }
+.preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.preview-frame {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+  overflow: auto;
+  max-height: calc(100vh - 120px);
+}
+.preview-scale {
+  width: 720px;
+  transform-origin: top left;
+}
+#invoice-sheet {
+  width: 720px;
+  min-height: 1040px;
+  background: #fffdf9;
+  color: #1d2030;
+  font-family: var(--font);
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(26,33,72,0.08);
+}
+#times-row[hidden], #manual-row[hidden], #midnight-note[hidden] {
+  display: none !important;
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--indigo);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 650;
+  display: none;
+  z-index: 80;
+}
+.toast.show { display: block; }
+.settings-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(18,23,54,0.45);
+  z-index: 40;
+}
+.settings-backdrop.open { display: block; }
+.settings-panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(420px, 100%);
+  background: var(--white);
+  z-index: 50;
+  box-shadow: -8px 0 24px rgba(0,0,0,0.15);
+  overflow: auto;
+  padding: 20px;
+  transform: translateX(110%);
+  transition: transform 0.2s ease;
+}
+.settings-panel.open { transform: translateX(0); }
+.settings-panel h2 { margin-top: 0; color: var(--indigo); }
+.note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.err { color: var(--vermilion); font-size: 13px; font-weight: 650; min-height: 1.2em; }
+@media (max-width: 960px) {
+  .wrap { grid-template-columns: 1fr; }
+  .preview-frame { max-height: none; }
+}
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <div class="brand-block">
+        <p class="eyebrow">Bookmark-only tool</p>
+        <h1>Assistant in Japan</h1>
+        <p class="sub">Minute calculator and PDF bill</p>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn-light" id="btn-settings">Settings</button>
+        <button type="button" class="btn-light" id="btn-new">New bill</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" id="form-card">
+      <h2>Call details</h2>
+      <p class="hint">Prices: connection ¥200 + ¥95 a minute. Minimum ¥750 per call. Billable time is rounded up to the next full minute.</p>
+
+      <div class="field">
+        <label for="customerName">Customer name</label>
+        <input type="text" id="customerName" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="customerEmail">Customer email <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+        <input type="email" id="customerEmail" autocomplete="email">
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label for="callDate">Call date</label>
+          <input type="date" id="callDate" required>
+        </div>
+        <div class="field">
+          <label for="pair">Language pair</label>
+          <select id="pair">
+            <option value="JP-EN">Japanese ⇔ English</option>
+            <option value="JP-ES">Japanese ⇔ Spanish</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Duration</label>
+        <div class="seg" id="mode-seg">
+          <label class="active"><input type="radio" name="mode" value="times" checked> Start and end time</label>
+          <label><input type="radio" name="mode" value="manual"> Enter minutes</label>
+        </div>
+      </div>
+      <div class="row-2" id="times-row">
+        <div class="field">
+          <label for="startTime">Start time</label>
+          <input type="time" id="startTime" step="1">
+        </div>
+        <div class="field">
+          <label for="endTime">End time</label>
+          <input type="time" id="endTime" step="1">
+        </div>
+      </div>
+      <p class="note" id="midnight-note" hidden>This call went past midnight. Duration is counted across midnight.</p>
+      <div class="field" id="manual-row" hidden>
+        <label for="manualMinutes">Billable minutes</label>
+        <input type="number" id="manualMinutes" min="0" step="any" inputmode="decimal">
+        <p class="note">Whole minutes are used as entered. Partial minutes are rounded up (10.1 becomes 11).</p>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="invoiceNo">Invoice number</label>
+          <input type="text" id="invoiceNo">
+        </div>
+        <div class="field">
+          <label for="dueDate">Due date</label>
+          <input type="date" id="dueDate">
+          <p class="note">Defaults to 7 days after the call date.</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Document language</label>
+        <p class="note" style="margin-top:0;margin-bottom:6px;">This is the language of the PDF bill and the payment email text.</p>
+        <div class="seg" id="lang-seg">
+          <label class="active"><input type="radio" name="docLang" value="en" checked> EN</label>
+          <label><input type="radio" name="docLang" value="es"> ES</label>
+          <label><input type="radio" name="docLang" value="ja"> JA</label>
+        </div>
+      </div>
+
+      <p class="err" id="form-error"></p>
+      <div class="actions">
+        <button type="button" class="btn-primary" id="btn-pdf">Download PDF bill</button>
+        <button type="button" class="btn-ghost" id="btn-email">Copy email text</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="live" id="live">
+        <h2>Live breakdown</h2>
+        <p class="rule">Billable minutes = call duration rounded up to the next full minute. Example: 10 minutes and 1 second is billed as 11 minutes.</p>
+        <div id="live-body"></div>
+      </div>
+      <div class="preview-head">
+        <h2 style="margin:0;font-size:16px;color:var(--indigo);">Invoice preview</h2>
+        <span class="note">A4 layout · what you download</span>
+      </div>
+      <div class="preview-frame" id="preview-frame">
+        <div class="preview-scale" id="preview-scale">
+          <div id="invoice-sheet"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="settings-backdrop" id="settings-backdrop"></div>
+  <aside class="settings-panel" id="settings-panel" aria-label="Payment settings">
+    <h2>Payment settings</h2>
+    <p class="hint">Saved in this browser only. Fill these once; they appear on every bill and in the email text.</p>
+    <div class="field"><label for="s-paypal">PayPal link</label><input type="text" id="s-paypal" placeholder="https://"></div>
+    <div class="field"><label for="s-paypay">PayPay link or QR URL</label><input type="text" id="s-paypay" placeholder="https://"></div>
+    <div class="field"><label for="s-bank">Bank name</label><input type="text" id="s-bank"></div>
+    <div class="field"><label for="s-branch">Branch</label><input type="text" id="s-branch"></div>
+    <div class="field"><label for="s-type">Account type</label><input type="text" id="s-type" placeholder="Ordinary (普通)"></div>
+    <div class="field"><label for="s-acct">Account number</label><input type="text" id="s-acct"></div>
+    <div class="field"><label for="s-holder">Account holder (カナ)</label><input type="text" id="s-holder"></div>
+    <div class="field"><label for="s-wise">Wise details or link</label><textarea id="s-wise" rows="3"></textarea></div>
+    <div class="field"><label for="s-grace">Grace days after the due date</label><input type="number" id="s-grace" min="1" step="1" value="7"></div>
+    <div class="actions">
+      <button type="button" class="btn-primary" id="btn-save-settings">Save settings</button>
+      <button type="button" class="btn-ghost" id="btn-close-settings">Close</button>
+    </div>
+  </aside>
+  <div class="toast" id="toast" role="status"></div>
+<script type="text/plain" id="email-tpl-en">Assistant in Japan
+Over-the-phone interpreting · Japanese ⇔ English · Japanese ⇔ Spanish
+
+Subject: Payment request — Invoice {{INVOICE_NO}} | Assistant in Japan
+
+Hello {{CUSTOMER_NAME}},
+
+Thank you for using our interpreting service. Below are the details of your recent call and how to pay. Payment is due within 7 days of the call.
+
+CALL SUMMARY
+Invoice number: {{INVOICE_NO}}
+Call date: {{CALL_DATE}}
+Languages: {{LANGUAGES}}
+Duration: {{MINUTES}} min
+
+PRICE
+Connection fee: ¥200
+{{MINUTES}} min × ¥95: {{MINUTE_TOTAL}}
+Minimum charge: ¥750 per call. If the amount above is lower, the total is ¥750.
+
+TOTAL: {{TOTAL}}
+Please pay by: {{DUE_DATE}}
+
+HOW TO PAY
+Choose the option that is easiest for you.
+
+1) PayPal
+Cards accepted. No PayPal account needed.
+Pay here: {{PAYPAL_LINK}}
+
+2) PayPay
+For customers in Japan.
+Pay here: {{PAYPAY_LINK}}
+
+3) Bank transfer in Japan (振込)
+Bank: {{BANK_NAME}}
+Branch: {{BRANCH}}
+Account type: {{ACCOUNT_TYPE}}
+Account number: {{ACCOUNT_NO}}
+Account holder: {{ACCOUNT_HOLDER_KANA}}
+Please put the invoice number as the transfer reference. Transfer fees are paid by the customer.
+
+4) Wise (international transfer)
+{{WISE_DETAILS_OR_LINK}}
+
+Need another way to pay? Just reply to this email.
+
+IMPORTANT — PLEASE PAY BY THE DUE DATE
+If we do not receive payment by {{DUE_DATE}}, we will send a reminder. If this invoice remains unpaid {{GRACE_DAYS}} days after the due date, we will suspend all future interpreting services until the balance is paid in full. We may also refer the unpaid amount to a debt-collection agency or start a legal process to recover it. Any additional costs we reasonably incur to recover the debt may be charged to you, as permitted by law.
+
+If you need help with payment, please contact us before the due date.
+
+Questions?
+Phone: +81 90-6534-8689
+Email: assistantinjapan@gmail.com
+Website: https://assistantinjapan.github.io
+
+This is an automatic email sent after your call. If you have already paid, please ignore this message. For any question, just reply or call us.
+</script>
+<script type="text/plain" id="email-tpl-es">Assistant in Japan
+Interpretación por teléfono · Japonés ⇔ Inglés · Japonés ⇔ Español
+
+Asunto: Solicitud de pago — Factura {{INVOICE_NO}} | Assistant in Japan
+
+Hola, {{CUSTOMER_NAME}}:
+
+Gracias por utilizar nuestro servicio de interpretación. A continuación encontrará los datos de su llamada reciente y las formas de pago. El plazo de pago es de 7 días desde la fecha de la llamada.
+
+RESUMEN DE LA LLAMADA
+Número de factura: {{INVOICE_NO}}
+Fecha de la llamada: {{CALL_DATE}}
+Idiomas: {{LANGUAGES}}
+Duración: {{MINUTES}} min
+
+PRECIO
+Cuota de conexión: ¥200
+{{MINUTES}} min × ¥95: {{MINUTE_TOTAL}}
+Cargo mínimo: ¥750 por llamada. Si el importe anterior es menor, el total es de ¥750.
+
+TOTAL: {{TOTAL}}
+Fecha límite de pago: {{DUE_DATE}}
+
+CÓMO PAGAR
+Elija la opción que le resulte más fácil.
+
+1) PayPal
+Acepta tarjetas. No necesita una cuenta de PayPal.
+Pague aquí: {{PAYPAL_LINK}}
+
+2) PayPay
+Para clientes en Japón.
+Pague aquí: {{PAYPAY_LINK}}
+
+3) Transferencia bancaria en Japón (振込)
+Banco: {{BANK_NAME}}
+Sucursal: {{BRANCH}}
+Tipo de cuenta: {{ACCOUNT_TYPE}}
+Número de cuenta: {{ACCOUNT_NO}}
+Titular de la cuenta: {{ACCOUNT_HOLDER_KANA}}
+Indique el número de factura como concepto. Los gastos de transferencia corren a cargo del cliente.
+
+4) Wise (transferencia internacional)
+{{WISE_DETAILS_OR_LINK}}
+
+¿Necesita otra forma de pago? Responda a este correo y lo vemos.
+
+IMPORTANTE — PAGUE ANTES DE LA FECHA LÍMITE
+Si no recibimos el pago el {{DUE_DATE}} o antes, le enviaremos un recordatorio. Si esta factura sigue sin pagar {{GRACE_DAYS}} días después de la fecha límite, suspenderemos todos los servicios de interpretación futuros hasta que el saldo se abone por completo. También podremos ceder el importe impagado a una agencia de cobro de deudas o iniciar un proceso legal para reclamarlo. Los gastos adicionales en los que incurramos de forma razonable para recuperar la deuda podrán cargarse a usted, en la medida en que lo permita la ley.
+
+Si necesita ayuda para pagar, escríbanos antes de la fecha límite.
+
+¿Dudas?
+Teléfono: +81 90-6534-8689
+Correo: assistantinjapan@gmail.com
+Web: https://assistantinjapan.github.io
+
+Este es un correo automático enviado después de su llamada. Si ya ha efectuado el pago, ignore este mensaje. Si tiene cualquier duda, responda a este correo o llámenos.
+</script>
+<script type="text/plain" id="email-tpl-ja">Assistant in Japan
+電話通訳 · 日本語 ⇔ 英語 · 日本語 ⇔ スペイン語
+
+件名: お支払いのご案内 — 請求書番号 {{INVOICE_NO}} | Assistant in Japan
+
+{{CUSTOMER_NAME}} 様
+
+このたびは、当サービスの通訳をご利用いただき、ありがとうございます。以下に、今回の通話内容とお支払い方法をご案内します。お支払期限は、通話日の7日後です。
+
+通話の概要
+請求書番号: {{INVOICE_NO}}
+通話日: {{CALL_DATE}}
+言語: {{LANGUAGES}}
+通話時間: {{MINUTES}} 分
+
+料金
+接続料: ¥200
+{{MINUTES}} 分 × ¥95: {{MINUTE_TOTAL}}
+最低料金: 1回の通話につき ¥750。上記の合計がこれを下回る場合、合計は ¥750 となります。
+
+合計: {{TOTAL}}
+お支払期限: {{DUE_DATE}}
+
+お支払い方法
+ご都合のよい方法をお選びください。
+
+1) PayPal
+クレジットカードでもお支払いいただけます。PayPalのアカウントは不要です。
+お支払いはこちら: {{PAYPAL_LINK}}
+
+2) PayPay
+日本国内のお客様向けです。
+お支払いはこちら: {{PAYPAY_LINK}}
+
+3) 銀行振込（日本国内）
+銀行: {{BANK_NAME}}
+支店: {{BRANCH}}
+口座種別: {{ACCOUNT_TYPE}}
+口座番号: {{ACCOUNT_NO}}
+口座名義: {{ACCOUNT_HOLDER_KANA}}
+振込依頼人名は請求書番号をご記入ください。振込手数料はお客様負担となります。
+
+4) Wise（海外送金）
+{{WISE_DETAILS_OR_LINK}}
+
+ほかの方法をご希望の場合は、このメールにご返信ください。
+
+重要 — 期日までにお支払いください
+期日（{{DUE_DATE}}）までにお支払いが確認できない場合は、ご請求の再案内をお送りします。期日から{{GRACE_DAYS}}日を過ぎてもお支払いがない場合、未払いの残高が完済されるまで、今後の通訳サービスをすべて停止します。また、未払い金の回収を債権回収業者に委託する、または法的手続きを取る場合があります。回収に要した合理的な費用は、法令で認められる範囲でお客様のご負担となることがあります。
+
+お支払いについてご相談がある場合は、期日前にご連絡ください。
+
+お問い合わせ
+電話: +81 90-6534-8689
+メール: assistantinjapan@gmail.com
+ウェブサイト: https://assistantinjapan.github.io
+
+このメールは、通話後に自動でお送りしています。すでに料金をお支払いの場合は、このメールはご放念ください。ご不明な点は、ご返信またはお電話にてお問い合わせください。
+</script>
+
+<script src="html2pdf.bundle.min.js"></script>
+<script>
+(function () {
+  const FEE = 200, RATE = 95, MIN = 750;
+  const STORAGE_KEY = "aij-billing-settings-v1";
+  const DEFAULT_SETTINGS = {
+    paypalLink: "{{PAYPAL_LINK}}",
+    paypayLink: "{{PAYPAY_LINK}}",
+    bankName: "{{BANK_NAME}}",
+    branch: "{{BRANCH}}",
+    accountType: "{{ACCOUNT_TYPE}}",
+    accountNo: "{{ACCOUNT_NO}}",
+    accountHolderKana: "{{ACCOUNT_HOLDER_KANA}}",
+    wiseDetails: "{{WISE_DETAILS_OR_LINK}}",
+    graceDays: 7
+  };
+
+  const T = {
+    en: {
+      invoice: "Invoice",
+      billTo: "Bill to",
+      invoiceNo: "Invoice number",
+      callDate: "Call date",
+      languages: "Languages",
+      duration: "Duration",
+      due: "Due date",
+      minutesUnit: "min",
+      connection: "Connection fee",
+      interpreting: function (n) { return "Interpreting — " + n + " min × ¥95"; },
+      subtotal: "Subtotal",
+      adjustment: "Minimum charge adjustment",
+      minNote: "Minimum charge: ¥750 per call.",
+      total: "Total",
+      howToPay: "How to pay",
+      payPaypal: "Cards accepted, no account needed.",
+      payPaypay: "For customers in Japan.",
+      payBank: "Bank transfer in Japan (振込). Please put the invoice number as the transfer reference. Transfer fees are paid by the customer.",
+      bank: "Bank", branch: "Branch", type: "Account type", acct: "Account number", holder: "Account holder",
+      payWise: "International transfer.",
+      other: "Need another way to pay? Reply to our email or call us.",
+      cautionHead: "IMPORTANT — PLEASE PAY BY THE DUE DATE",
+      caution: function (due, grace) {
+        return "If we do not receive payment by " + due + ", we will send a reminder. If this invoice remains unpaid " + grace + " days after the due date, we will suspend all future interpreting services until the balance is paid in full. We may also refer the unpaid amount to a debt-collection agency or start a legal process to recover it. Any additional costs we reasonably incur to recover the debt may be charged to you, as permitted by law.";
+      },
+      thanks: "Thank you for using our interpreting service.",
+      tagline: "Over-the-phone interpreting · Japanese ⇔ English · Japanese ⇔ Spanish",
+      auto: "This bill was prepared by Assistant in Japan.",
+      pair: { "JP-EN": "Japanese ⇔ English", "JP-ES": "Japanese ⇔ Spanish" }
+    },
+    es: {
+      invoice: "Factura",
+      billTo: "Facturar a",
+      invoiceNo: "Número de factura",
+      callDate: "Fecha de la llamada",
+      languages: "Idiomas",
+      duration: "Duración",
+      due: "Fecha límite de pago",
+      minutesUnit: "min",
+      connection: "Cuota de conexión",
+      interpreting: function (n) { return "Interpretación — " + n + " min × ¥95"; },
+      subtotal: "Subtotal",
+      adjustment: "Ajuste por cargo mínimo",
+      minNote: "Cargo mínimo: ¥750 por llamada.",
+      total: "Total",
+      howToPay: "Cómo pagar",
+      payPaypal: "Acepta tarjetas, no necesita una cuenta.",
+      payPaypay: "Para clientes en Japón.",
+      payBank: "Transferencia bancaria en Japón (振込). Indique el número de factura como concepto. Los gastos de transferencia corren a cargo del cliente.",
+      bank: "Banco", branch: "Sucursal", type: "Tipo de cuenta", acct: "Número de cuenta", holder: "Titular de la cuenta",
+      payWise: "Transferencia internacional.",
+      other: "¿Necesita otra forma de pago? Responda a nuestro correo o llámenos.",
+      cautionHead: "IMPORTANTE — PAGUE ANTES DE LA FECHA LÍMITE",
+      caution: function (due, grace) {
+        return "Si no recibimos el pago el " + due + " o antes, le enviaremos un recordatorio. Si esta factura sigue sin pagar " + grace + " días después de la fecha límite, suspenderemos todos los servicios de interpretación futuros hasta que el saldo se abone por completo. También podremos ceder el importe impagado a una agencia de cobro de deudas o iniciar un proceso legal para reclamarlo. Los gastos adicionales en los que incurramos de forma razonable para recuperar la deuda podrán cargarse a usted, en la medida en que lo permita la ley.";
+      },
+      thanks: "Gracias por utilizar nuestro servicio de interpretación.",
+      tagline: "Interpretación por teléfono · Japonés ⇔ Inglés · Japonés ⇔ Español",
+      auto: "Esta factura ha sido emitida por Assistant in Japan.",
+      pair: { "JP-EN": "Japonés ⇔ Inglés", "JP-ES": "Japonés ⇔ Español" }
+    },
+    ja: {
+      invoice: "請求書",
+      billTo: "請求先",
+      invoiceNo: "請求書番号",
+      callDate: "通話日",
+      languages: "言語",
+      duration: "通話時間",
+      due: "お支払期限",
+      minutesUnit: "分",
+      connection: "接続料",
+      interpreting: function (n) { return "通訳 — " + n + "分 × ¥95"; },
+      subtotal: "小計",
+      adjustment: "最低料金の調整",
+      minNote: "最低料金: 1回の通話につき ¥750。",
+      total: "合計",
+      howToPay: "お支払い方法",
+      payPaypal: "クレジットカードでもお支払いいただけます。アカウントは不要です。",
+      payPaypay: "日本国内のお客様向け。",
+      payBank: "銀行振込（日本国内）。振込依頼人名は請求書番号をご記入ください。振込手数料はお客様負担となります。",
+      bank: "銀行", branch: "支店", type: "口座種別", acct: "口座番号", holder: "口座名義",
+      payWise: "海外送金。",
+      other: "ほかの方法をご希望の場合は、メールまたはお電話でご連絡ください。",
+      cautionHead: "重要 — 期日までにお支払いください",
+      caution: function (due, grace) {
+        return "期日（" + due + "）までにお支払いが確認できない場合は、ご請求の再案内をお送りします。期日から" + grace + "日を過ぎてもお支払いがない場合、未払いの残高が完済されるまで、今後の通訳サービスをすべて停止します。また、未払い金の回収を債権回収業者に委託する、または法的手続きを取る場合があります。回収に要した合理的な費用は、法令で認められる範囲でお客様のご負担となることがあります。";
+      },
+      thanks: "このたびは、当サービスの通訳をご利用いただき、ありがとうございました。",
+      tagline: "電話通訳 · 日本語 ⇔ 英語 · 日本語 ⇔ スペイン語",
+      auto: "本請求書は Assistant in Japan が作成しました。",
+      pair: { "JP-EN": "日本語 ⇔ 英語", "JP-ES": "日本語 ⇔ スペイン語" }
+    }
+  };
+
+  const $ = function (id) { return document.getElementById(id); };
+  let invoiceDirty = false, dueDirty = false, settings = loadSettings();
+
+  function loadSettings() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return Object.assign({}, DEFAULT_SETTINGS);
+      return Object.assign({}, DEFAULT_SETTINGS, JSON.parse(raw));
+    } catch (e) {
+      return Object.assign({}, DEFAULT_SETTINGS);
+    }
+  }
+  function saveSettings(next) {
+    settings = Object.assign({}, DEFAULT_SETTINGS, next);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+  }
+  function settingsToForm() {
+    $("s-paypal").value = settings.paypalLink;
+    $("s-paypay").value = settings.paypayLink;
+    $("s-bank").value = settings.bankName;
+    $("s-branch").value = settings.branch;
+    $("s-type").value = settings.accountType;
+    $("s-acct").value = settings.accountNo;
+    $("s-holder").value = settings.accountHolderKana;
+    $("s-wise").value = settings.wiseDetails;
+    $("s-grace").value = settings.graceDays;
+  }
+  function formToSettings() {
+    return {
+      paypalLink: $("s-paypal").value.trim() || DEFAULT_SETTINGS.paypalLink,
+      paypayLink: $("s-paypay").value.trim() || DEFAULT_SETTINGS.paypayLink,
+      bankName: $("s-bank").value.trim() || DEFAULT_SETTINGS.bankName,
+      branch: $("s-branch").value.trim() || DEFAULT_SETTINGS.branch,
+      accountType: $("s-type").value.trim() || DEFAULT_SETTINGS.accountType,
+      accountNo: $("s-acct").value.trim() || DEFAULT_SETTINGS.accountNo,
+      accountHolderKana: $("s-holder").value.trim() || DEFAULT_SETTINGS.accountHolderKana,
+      wiseDetails: $("s-wise").value.trim() || DEFAULT_SETTINGS.wiseDetails,
+      graceDays: Math.max(1, parseInt($("s-grace").value, 10) || 7)
+    };
+  }
+
+  function yen(n) {
+    return "¥" + Math.round(Number(n)).toLocaleString("en-US");
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+    });
+  }
+  function isUrl(s) {
+    return /^https?:\/\//i.test(String(s || "").trim());
+  }
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function isoDate(d) {
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+  function addDays(iso, days) {
+    const p = iso.split("-").map(Number);
+    const dt = new Date(p[0], p[1] - 1, p[2] + Number(days));
+    return isoDate(dt);
+  }
+  function formatDate(iso, lang) {
+    if (!iso) return "";
+    const p = iso.split("-").map(Number);
+    const y = p[0], m = p[1], d = p[2];
+    if (lang === "ja") return y + "年" + m + "月" + d + "日";
+    if (lang === "es") {
+      const months = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+      return d + " de " + months[m - 1] + " de " + y;
+    }
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    return d + " " + months[m - 1] + " " + y;
+  }
+  function defaultInvoiceNo(callDateIso) {
+    const now = new Date();
+    const datePart = (callDateIso || isoDate(now)).replace(/-/g, "");
+    return "AIJ-" + datePart + "-" + pad(now.getHours()) + pad(now.getMinutes());
+  }
+  function parseTime(str) {
+    if (!str) return null;
+    const p = String(str).split(":").map(function (x) { return parseInt(x, 10); });
+    if (p.length < 2 || p.some(function (n) { return isNaN(n); })) return null;
+    return (p[0] || 0) * 3600 + (p[1] || 0) * 60 + (p[2] || 0);
+  }
+  function durationSeconds(start, end) {
+    const a = parseTime(start);
+    let b = parseTime(end);
+    if (a == null || b == null) return null;
+    let crossed = false;
+    if (b < a) { b += 86400; crossed = true; }
+    return { seconds: b - a, crossed: crossed };
+  }
+  function billableFromSeconds(sec) {
+    if (sec <= 0) return 0;
+    return Math.ceil(sec / 60);
+  }
+  function mode() {
+    const el = document.querySelector('input[name="mode"]:checked');
+    return el ? el.value : "times";
+  }
+  function docLang() {
+    const el = document.querySelector('input[name="docLang"]:checked');
+    return el ? el.value : "en";
+  }
+
+  function calculate(opts) {
+    opts = opts || {};
+    const useMode = opts.mode || mode();
+    let minutes = 0, seconds = null, crossed = false;
+    if (useMode === "manual") {
+      const raw = opts.manualMinutes != null ? opts.manualMinutes : $("manualMinutes").value;
+      const n = parseFloat(String(raw).replace(",", "."));
+      if (!isFinite(n) || n < 0) return { error: "minutes", ok: false };
+      minutes = Math.ceil(n);
+      if (n === 0) minutes = 0;
+    } else {
+      const start = opts.start != null ? opts.start : $("startTime").value;
+      const end = opts.end != null ? opts.end : $("endTime").value;
+      const d = durationSeconds(start, end);
+      if (!d) return { error: "time", ok: false };
+      seconds = d.seconds;
+      crossed = d.crossed;
+      minutes = billableFromSeconds(d.seconds);
+    }
+    const minuteTotal = minutes * RATE;
+    const subtotal = FEE + minuteTotal;
+    const minimumApplied = subtotal < MIN;
+    const total = Math.max(subtotal, MIN);
+    return {
+      ok: true,
+      minutes: minutes,
+      seconds: seconds,
+      crossed: crossed,
+      minuteTotal: minuteTotal,
+      subtotal: subtotal,
+      minimumApplied: minimumApplied,
+      adjustment: total - subtotal,
+      total: total,
+      connectionFee: FEE,
+      rate: RATE,
+      minimum: MIN
+    };
+  }
+
+  function formatDuration(seconds, minutes, lang) {
+    if (seconds == null) {
+      return minutes + " " + T[lang].minutesUnit;
+    }
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    const clock = (h ? (h + ":") : "") + pad(m) + ":" + pad(s);
+    if (lang === "ja") return minutes + "分（実時間 " + clock + "）";
+    if (lang === "es") return minutes + " min (duración real " + clock + ")";
+    return minutes + " min (actual " + clock + ")";
+  }
+
+  function getState() {
+    const lang = docLang();
+    const calc = calculate();
+    return {
+      customerName: $("customerName").value.trim(),
+      customerEmail: $("customerEmail").value.trim(),
+      callDate: $("callDate").value,
+      dueDate: $("dueDate").value,
+      invoiceNo: $("invoiceNo").value.trim(),
+      pair: $("pair").value,
+      lang: lang,
+      calc: calc,
+      settings: settings
+    };
+  }
+
+  function fillTemplate(tpl, map) {
+    let out = tpl;
+    Object.keys(map).forEach(function (k) {
+      out = out.split("{{" + k + "}}").join(map[k]);
+    });
+    return out;
+  }
+
+  function emailValues(state) {
+    const lang = state.lang;
+    const c = state.calc;
+    return {
+      CUSTOMER_NAME: state.customerName || "",
+      CALL_DATE: formatDate(state.callDate, lang),
+      LANGUAGES: T[lang].pair[state.pair],
+      MINUTES: String(c.ok ? c.minutes : ""),
+      INVOICE_NO: state.invoiceNo,
+      MINUTE_TOTAL: c.ok ? yen(c.minuteTotal) : "",
+      TOTAL: c.ok ? yen(c.total) : "",
+      DUE_DATE: formatDate(state.dueDate, lang),
+      PAYPAL_LINK: settings.paypalLink,
+      PAYPAY_LINK: settings.paypayLink,
+      BANK_NAME: settings.bankName,
+      BRANCH: settings.branch,
+      ACCOUNT_TYPE: settings.accountType,
+      ACCOUNT_NO: settings.accountNo,
+      ACCOUNT_HOLDER_KANA: settings.accountHolderKana,
+      WISE_DETAILS_OR_LINK: settings.wiseDetails,
+      GRACE_DAYS: String(settings.graceDays)
+    };
+  }
+
+  function getEmailText(state) {
+    state = state || getState();
+    const raw = ($("email-tpl-" + state.lang) || $("email-tpl-en")).textContent;
+    return fillTemplate(raw, emailValues(state)).replace(/^\s+|\s+$/g, "") + "\n";
+  }
+
+  function renderLive(state) {
+    const c = state.calc;
+    const note = $("midnight-note");
+    if (c.ok && c.crossed) note.hidden = false;
+    else note.hidden = true;
+    if (!c.ok) {
+      $("live-body").innerHTML = '<p style="margin:0;color:#c9cee6;">Enter a start and end time, or switch to minutes, to see the total.</p>';
+      return;
+    }
+    const minLine = c.minimumApplied
+      ? '<tr class="min-on"><td>Minimum ¥750 applied</td><td>+ ' + yen(c.adjustment) + "</td></tr>"
+      : '<tr class="min-off"><td>Minimum ¥750</td><td>Not applied</td></tr>';
+    const actual = c.seconds != null
+      ? (Math.floor(c.seconds / 60) + " min " + (c.seconds % 60) + " sec → ")
+      : "";
+    $("live-body").innerHTML =
+      "<table>" +
+      "<tr><td>Billable minutes</td><td>" + actual + "<strong>" + c.minutes + "</strong></td></tr>" +
+      "<tr><td>Connection fee</td><td>" + yen(c.connectionFee) + "</td></tr>" +
+      "<tr><td>" + c.minutes + " min × ¥95</td><td>" + yen(c.minuteTotal) + "</td></tr>" +
+      "<tr><td>Subtotal</td><td>" + yen(c.subtotal) + "</td></tr>" +
+      minLine +
+      '<tr class="total-row"><td>Total</td><td>' + yen(c.total) + "</td></tr>" +
+      "</table>" +
+      (state.dueDate ? '<p style="margin:10px 0 0;font-size:13px;color:#c9cee6;">Due ' + formatDate(state.dueDate, "en") + "</p>" : "");
+  }
+
+  function linkOrText(value) {
+    const v = String(value || "").trim();
+    if (isUrl(v)) return '<a href="' + esc(v) + '" style="color:#2b3570;word-break:break-all;">' + esc(v) + "</a>";
+    return esc(v);
+  }
+
+  function renderInvoice(state) {
+    const sheet = $("invoice-sheet");
+    const lang = state.lang;
+    const t = T[lang];
+    const c = state.calc;
+    if (!c.ok) {
+      sheet.innerHTML = '<p style="color:#5a5f73;padding:40px 0;">Fill in the call duration to preview the bill.</p>';
+      return;
+    }
+    const due = formatDate(state.dueDate, lang);
+    const call = formatDate(state.callDate, lang);
+    const lines = [
+      '<tr><td style="padding:7px 0;border-bottom:1px solid #efe9de;">' + esc(t.connection) + '</td><td style="padding:7px 0;border-bottom:1px solid #efe9de;text-align:right;white-space:nowrap;">' + yen(c.connectionFee) + "</td></tr>",
+      '<tr><td style="padding:7px 0;border-bottom:1px solid #efe9de;">' + esc(t.interpreting(c.minutes)) + '</td><td style="padding:7px 0;border-bottom:1px solid #efe9de;text-align:right;white-space:nowrap;">' + yen(c.minuteTotal) + "</td></tr>"
+    ];
+    if (c.minimumApplied) {
+      lines.push('<tr><td style="padding:7px 0;border-bottom:1px solid #efe9de;">' + esc(t.adjustment) + '</td><td style="padding:7px 0;border-bottom:1px solid #efe9de;text-align:right;white-space:nowrap;">' + yen(c.adjustment) + "</td></tr>");
+    }
+    const emailLine = state.customerEmail ? "<br>" + esc(state.customerEmail) : "";
+    sheet.innerHTML =
+      '<div style="background:#1a2148;color:#fff;">' +
+        '<div style="height:4px;background:#c53a2a;"></div>' +
+        '<div style="padding:16px 28px 14px;">' +
+        '<div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#c9cee6;">' + esc(t.invoice) + "</div>" +
+        '<div style="font-size:22px;font-weight:800;margin-top:2px;">Assistant in Japan</div>' +
+        '<div style="font-size:12px;color:#c9cee6;margin-top:2px;">' + esc(t.tagline) + "</div>" +
+        '<div style="font-size:12px;color:#fff;margin-top:10px;line-height:1.55;">' +
+          '+81 90-6534-8689<br>assistantinjapan@gmail.com<br>https://assistantinjapan.github.io</div>' +
+        "</div>" +
+      "</div>" +
+      '<div style="padding:22px 28px 28px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px;">' +
+        '<div><div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#c53a2a;font-weight:700;">' + esc(t.invoice) + "</div>" +
+        '<div style="font-size:20px;font-weight:800;color:#1a2148;">' + esc(state.invoiceNo || "—") + "</div></div>" +
+        '<div style="text-align:right;font-size:13px;line-height:1.55;color:#1d2030;">' +
+          '<div><span style="color:#5a5f73;">' + esc(t.callDate) + ":</span> " + esc(call) + "</div>" +
+          '<div><span style="color:#5a5f73;">' + esc(t.due) + ":</span> <strong>" + esc(due) + "</strong></div>" +
+        "</div>" +
+      "</div>" +
+      '<div style="display:flex;gap:24px;margin-bottom:16px;font-size:13px;line-height:1.55;">' +
+        '<div style="flex:1;"><div style="color:#5a5f73;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">' + esc(t.billTo) + "</div>" +
+        "<strong>" + esc(state.customerName || "—") + "</strong>" + emailLine + "</div>" +
+        '<div style="flex:1;"><div style="color:#5a5f73;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">' + esc(t.languages) + "</div>" +
+        esc(t.pair[state.pair]) + "<br>" + esc(t.duration) + ": " + esc(formatDuration(c.seconds, c.minutes, lang)) + "</div>" +
+      "</div>" +
+      '<table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:4px;">' +
+        lines.join("") +
+        '<tr><td style="padding:12px 0 4px;font-size:13px;color:#5a5f73;">' + esc(t.minNote) + '</td><td></td></tr>' +
+        '<tr><td style="padding:8px 0 0;font-size:18px;font-weight:800;color:#1a2148;">' + esc(t.total) + '</td>' +
+        '<td style="padding:8px 0 0;text-align:right;font-size:28px;font-weight:800;color:#c53a2a;">' + yen(c.total) + "</td></tr>" +
+      "</table>" +
+      '<div style="margin-top:18px;font-size:13px;line-height:1.5;">' +
+        '<div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#c53a2a;font-weight:700;margin-bottom:6px;">' + esc(t.howToPay) + "</div>" +
+        '<ol style="margin:0;padding-left:18px;">' +
+          "<li style='margin-bottom:6px;'><strong>PayPal.</strong> " + esc(t.payPaypal) + " " + linkOrText(settings.paypalLink) + "</li>" +
+          "<li style='margin-bottom:6px;'><strong>PayPay.</strong> " + esc(t.payPaypay) + " " + linkOrText(settings.paypayLink) + "</li>" +
+          "<li style='margin-bottom:6px;'><strong>" + (lang === "ja" ? "銀行振込" : lang === "es" ? "Transferencia bancaria" : "Bank transfer") + ".</strong> " + esc(t.payBank) +
+            "<div style='margin-top:4px;padding:6px 8px;background:#f7f3ec;font-size:12px;'>" +
+            esc(t.bank) + ": " + esc(settings.bankName) + " · " +
+            esc(t.branch) + ": " + esc(settings.branch) + "<br>" +
+            esc(t.type) + ": " + esc(settings.accountType) + " · " +
+            esc(t.acct) + ": " + esc(settings.accountNo) + "<br>" +
+            esc(t.holder) + ": " + esc(settings.accountHolderKana) +
+            "</div></li>" +
+          "<li><strong>Wise.</strong> " + esc(t.payWise) + " " + linkOrText(settings.wiseDetails) + "</li>" +
+        "</ol>" +
+        '<p style="margin:8px 0 0;">' + esc(t.other) + "</p>" +
+      "</div>" +
+      '<div style="margin-top:16px;border:3px solid #c53a2a;background:#fdecea;padding:10px 12px;">' +
+        '<div style="font-weight:800;color:#c53a2a;font-size:12px;margin-bottom:4px;">' + esc(t.cautionHead) + "</div>" +
+        '<div style="font-weight:700;font-size:11.5px;line-height:1.5;color:#1d2030;">' + esc(t.caution(due, settings.graceDays)) + "</div>" +
+      "</div>" +
+      '<div style="margin-top:18px;font-size:12px;color:#5a5f73;border-top:1px solid #e3ddd2;padding-top:10px;">' +
+        esc(t.thanks) + "<br>" + esc(t.auto) +
+      "</div></div>";
+  }
+
+  function refresh() {
+    const state = getState();
+    renderLive(state);
+    renderInvoice(state);
+    scalePreview();
+    return state;
+  }
+
+  function scalePreview() {
+    const frame = $("preview-frame");
+    const scaleBox = $("preview-scale");
+    const sheet = $("invoice-sheet");
+    if (!frame || !scaleBox || !sheet) return;
+    const w = frame.clientWidth - 32;
+    const s = Math.min(1, Math.max(0.3, w / 720));
+    scaleBox.style.transform = "scale(" + s + ")";
+    scaleBox.style.height = (Math.max(sheet.offsetHeight, 1040) * s) + "px";
+  }
+
+  function toast(msg) {
+    const el = $("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    setTimeout(function () { el.classList.remove("show"); }, 2200);
+  }
+
+  function setError(msg) { $("form-error").textContent = msg || ""; }
+
+  function openSettings(open) {
+    $("settings-panel").classList.toggle("open", open);
+    $("settings-backdrop").classList.toggle("open", open);
+  }
+
+  function syncModeUI() {
+    const m = mode();
+    $("times-row").hidden = m !== "times";
+    $("manual-row").hidden = m !== "manual";
+    document.querySelectorAll("#mode-seg label").forEach(function (lab) {
+      lab.classList.toggle("active", lab.querySelector("input").checked);
+    });
+  }
+  function syncLangUI() {
+    document.querySelectorAll("#lang-seg label").forEach(function (lab) {
+      lab.classList.toggle("active", lab.querySelector("input").checked);
+    });
+  }
+
+  async function pdfBlob(filename) {
+    const state = refresh();
+    if (!state.calc.ok) throw new Error("incomplete");
+    const src = $("invoice-sheet");
+    const clone = src.cloneNode(true);
+    clone.id = "invoice-sheet-print";
+    clone.style.minHeight = "0";
+    clone.style.height = "auto";
+    clone.style.boxShadow = "none";
+    clone.style.transform = "none";
+    const holder = document.createElement("div");
+    holder.style.cssText = "position:fixed;top:0;left:0;width:720px;background:#fffdf9;z-index:-1;pointer-events:none;";
+    holder.appendChild(clone);
+    document.body.appendChild(holder);
+    try {
+      await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
+      const worker = html2pdf().set({
+        margin: 0,
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          backgroundColor: "#fffdf9",
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: 720
+        },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+      }).from(clone);
+      const canvas = await worker.toCanvas().get("canvas");
+      const pdf = await html2pdf().set({
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+      }).from(document.createElement("div")).toPdf().get("pdf");
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const margin = 8;
+      const maxW = pageW - margin * 2;
+      const maxH = pageH - margin * 2;
+      let w = maxW;
+      let h = (canvas.height / canvas.width) * w;
+      if (h > maxH) {
+        h = maxH;
+        w = (canvas.width / canvas.height) * h;
+      }
+      const x = (pageW - w) / 2;
+      const y = margin;
+      const img = canvas.toDataURL("image/jpeg", 0.98);
+      const existing = pdf.internal.getNumberOfPages();
+      pdf.addPage();
+      for (let i = existing; i >= 1; i--) pdf.deletePage(i);
+      pdf.addImage(img, "JPEG", x, y, w, h);
+      return pdf.output("blob");
+    } finally {
+      holder.remove();
+    }
+  }
+
+  async function downloadPdf() {
+    const state = getState();
+    if (!state.customerName) { setError("Please enter the customer name."); return; }
+    if (!state.callDate) { setError("Please enter the call date."); return; }
+    if (!state.calc.ok) {
+      setError(state.calc.error === "minutes" ? "Please enter the minutes." : "Please enter a start and end time, or switch to minutes.");
+      return;
+    }
+    setError("");
+    const filename = "Assistant-in-Japan-" + (state.invoiceNo || "invoice") + ".pdf";
+    try {
+      const blob = await pdfBlob(filename);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+      toast("PDF downloaded");
+    } catch (err) {
+      setError("Could not create the PDF.");
+      console.error(err);
+    }
+  }
+
+  async function copyEmail() {
+    const state = getState();
+    if (!state.calc.ok) {
+      setError(state.calc.error === "minutes" ? "Please enter the minutes." : "Please enter a start and end time, or switch to minutes.");
+      return;
+    }
+    setError("");
+    const text = getEmailText(state);
+    try {
+      await navigator.clipboard.writeText(text);
+      toast("Email text copied");
+    } catch (e) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      toast("Email text copied");
+    }
+  }
+
+  function fillForm(data) {
+    if (!data) return;
+    if (data.customerName != null) $("customerName").value = data.customerName;
+    if (data.customerEmail != null) $("customerEmail").value = data.customerEmail;
+    if (data.callDate != null) $("callDate").value = data.callDate;
+    if (data.dueDate != null) { $("dueDate").value = data.dueDate; dueDirty = true; }
+    if (data.invoiceNo != null) { $("invoiceNo").value = data.invoiceNo; invoiceDirty = true; }
+    if (data.pair != null) $("pair").value = data.pair;
+    if (data.docLang) {
+      const r = document.querySelector('input[name="docLang"][value="' + data.docLang + '"]');
+      if (r) r.checked = true;
+      syncLangUI();
+    }
+    if (data.mode) {
+      const r = document.querySelector('input[name="mode"][value="' + data.mode + '"]');
+      if (r) r.checked = true;
+      syncModeUI();
+    }
+    if (data.start != null) $("startTime").value = data.start;
+    if (data.end != null) $("endTime").value = data.end;
+    if (data.manualMinutes != null) $("manualMinutes").value = data.manualMinutes;
+    if (data.settings) {
+      saveSettings(Object.assign({}, settings, data.settings));
+      settingsToForm();
+    }
+    refresh();
+  }
+
+  function resetBill() {
+    invoiceDirty = false;
+    dueDirty = false;
+    $("customerName").value = "";
+    $("customerEmail").value = "";
+    const today = isoDate(new Date());
+    $("callDate").value = today;
+    $("dueDate").value = addDays(today, 7);
+    $("invoiceNo").value = defaultInvoiceNo(today);
+    $("pair").value = "JP-EN";
+    $("startTime").value = "";
+    $("endTime").value = "";
+    $("manualMinutes").value = "";
+    document.querySelector('input[name="mode"][value="times"]').checked = true;
+    document.querySelector('input[name="docLang"][value="en"]').checked = true;
+    setError("");
+    syncModeUI();
+    syncLangUI();
+    refresh();
+  }
+
+  function onCallDateChange() {
+    const d = $("callDate").value;
+    if (!dueDirty && d) $("dueDate").value = addDays(d, 7);
+    if (!invoiceDirty && d) $("invoiceNo").value = defaultInvoiceNo(d);
+  }
+
+  // Events
+  settingsToForm();
+  $("btn-settings").addEventListener("click", function () { settingsToForm(); openSettings(true); });
+  $("btn-close-settings").addEventListener("click", function () { openSettings(false); });
+  $("settings-backdrop").addEventListener("click", function () { openSettings(false); });
+  $("btn-save-settings").addEventListener("click", function () {
+    saveSettings(formToSettings());
+    settingsToForm();
+    refresh();
+    toast("Settings saved in this browser");
+  });
+  $("btn-new").addEventListener("click", resetBill);
+  $("btn-pdf").addEventListener("click", downloadPdf);
+  $("btn-email").addEventListener("click", copyEmail);
+  $("invoiceNo").addEventListener("input", function () { invoiceDirty = true; });
+  $("dueDate").addEventListener("input", function () { dueDirty = true; });
+  $("callDate").addEventListener("change", onCallDateChange);
+  document.querySelectorAll('input[name="mode"]').forEach(function (el) {
+    el.addEventListener("change", function () { syncModeUI(); refresh(); });
+  });
+  document.querySelectorAll('input[name="docLang"]').forEach(function (el) {
+    el.addEventListener("change", function () { syncLangUI(); refresh(); });
+  });
+  ["customerName","customerEmail","callDate","dueDate","invoiceNo","pair","startTime","endTime","manualMinutes"].forEach(function (id) {
+    $(id).addEventListener("input", refresh);
+    $(id).addEventListener("change", refresh);
+  });
+  window.addEventListener("resize", scalePreview);
+
+  resetBill();
+
+  window.__AIJ_BILLING = {
+    FEE: FEE, RATE: RATE, MIN: MIN,
+    calculate: calculate,
+    getState: getState,
+    fillForm: fillForm,
+    getEmailText: getEmailText,
+    pdfBlob: pdfBlob,
+    downloadPdf: downloadPdf,
+    yen: yen,
+    formatDate: formatDate,
+    refresh: refresh,
+    loadSettings: loadSettings,
+    saveSettings: saveSettings,
+    defaultSettings: DEFAULT_SETTINGS
+  };
+})();
+</script>
+</body>
+</html>
