@@ -401,6 +401,7 @@ html[lang="ja"] .eyebrow {
 
 /* Sections */
 .section { padding: 4.6rem 0; }
+.section.compact { padding-bottom: 0; }
 .alt {
   background-color: var(--paper);
   background-image: url("/img/illust-wave.svg");
@@ -651,6 +652,56 @@ textarea { min-height: 148px; resize: vertical; }
   justify-content: space-between;
 }
 
+/* Availability badge */
+.avail {
+  position: fixed;
+  z-index: 85;
+  left: 1rem;
+  bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  max-width: min(22rem, calc(100% - 2rem));
+  background: rgba(255, 253, 249, 0.97);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem 0.45rem 0.55rem;
+  box-shadow: 0 10px 28px rgba(26, 33, 72, 0.14);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.avail.is-closed { border-radius: 16px; }
+.avail-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  margin-top: 0.28rem;
+  border-radius: 50%;
+  flex: none;
+  background: var(--ok);
+  box-shadow: 0 0 0 4px rgba(31, 107, 74, 0.16);
+}
+.avail.is-closed .avail-dot {
+  background: #8d4a46;
+  box-shadow: 0 0 0 4px rgba(141, 74, 70, 0.16);
+}
+.avail-label { display: block; color: var(--indigo); font-size: 0.92rem; }
+.avail-detail {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.avail-detail a { font-weight: 700; }
+@media (max-width: 899px) {
+  .avail {
+    left: 0.55rem;
+    right: auto;
+    bottom: calc(6.1rem + env(safe-area-inset-bottom));
+    max-width: min(17.5rem, calc(100% - 1.1rem));
+    font-size: 0.82rem;
+  }
+}
+
 /* Sticky mobile call bar */
 .callbar {
   position: fixed;
@@ -762,6 +813,42 @@ textarea { min-height: 148px; resize: vertical; }
 @media (min-width: 760px) {
   .price-grid { grid-template-columns: repeat(3, 1fr); }
 }
+.rate-compare {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+@media (min-width: 860px) {
+  .rate-compare { grid-template-columns: 1fr 1fr; }
+}
+.rate-col h3 {
+  margin: 0 0 0.75rem;
+}
+.rate-col .price-grid {
+  grid-template-columns: 1fr;
+}
+.rate-trip {
+  margin-top: 1rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--indigo);
+  border-radius: var(--radius);
+  padding: 1.15rem 1.2rem 1.05rem;
+}
+.rate-trip h3 { margin-bottom: 0.35rem; }
+.trip-price {
+  margin: 0.2rem 0 0.45rem;
+  color: var(--indigo);
+}
+.trip-price strong {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.trip-price span { color: var(--muted); font-size: 1rem; margin-left: 0.25rem; }
+.rate-col .price-examples { margin-top: 0.75rem; }
 .price-grid li {
   background: var(--white);
   border: 1px solid var(--line);

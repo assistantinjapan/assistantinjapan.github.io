@@ -265,7 +265,16 @@ button, .btn {
   <main class="wrap">
     <section class="card" id="form-card">
       <h2>Call details</h2>
-      <p class="hint">Prices: connection ¥200 + ¥95 a minute. Minimum ¥750 per call. Billable time is rounded up to the next full minute.</p>
+      <p class="hint" id="price-hint">Prices: connection ¥200 + ¥95 a minute. Minimum ¥750 per call. Billable time is rounded up to the next full minute.</p>
+
+      <div class="field">
+        <label for="service">Service</label>
+        <select id="service">
+          <option value="phone">Phone call (¥200 + ¥95/min, min ¥750)</option>
+          <option value="video">Video call (¥400 + ¥190/min, min ¥1,500)</option>
+          <option value="trip">Trip scheduling (¥5,000 per hour)</option>
+        </select>
+      </div>
 
       <div class="field">
         <label for="customerName">Customer name</label>
@@ -289,6 +298,7 @@ button, .btn {
         </div>
       </div>
 
+      <div id="call-duration">
       <div class="field">
         <label>Duration</label>
         <div class="seg" id="mode-seg">
@@ -311,6 +321,19 @@ button, .btn {
         <label for="manualMinutes">Billable minutes</label>
         <input type="number" id="manualMinutes" min="0" step="any" inputmode="decimal">
         <p class="note">Whole minutes are used as entered. Partial minutes are rounded up (10.1 becomes 11).</p>
+      </div>
+      </div>
+      <div id="trip-fields" hidden>
+        <div class="field">
+          <label for="tripHours">Hours</label>
+          <input type="number" id="tripHours" min="0" step="0.25" inputmode="decimal" placeholder="1.5">
+          <p class="note">Decimals are fine. 1.5 hours is ¥7,500.</p>
+        </div>
+        <div class="field">
+          <label for="customAmount">Custom quoted amount (¥) <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <input type="number" id="customAmount" min="0" step="1" inputmode="decimal" placeholder="Leave blank to use ¥5,000 × hours">
+          <p class="note">If you enter an amount here, it replaces the hourly total.</p>
+        </div>
       </div>
 
       <div class="row-2">
@@ -345,7 +368,7 @@ button, .btn {
     <section>
       <div class="live" id="live">
         <h2>Live breakdown</h2>
-        <p class="rule">Billable minutes = call duration rounded up to the next full minute. Example: 10 minutes and 1 second is billed as 11 minutes.</p>
+        <p class="rule" id="live-rule">Billable minutes = call duration rounded up to the next full minute. Example: 10 minutes and 1 second is billed as 11 minutes.</p>
         <div id="live-body"></div>
       </div>
       <div class="preview-head">
@@ -380,24 +403,22 @@ button, .btn {
   </aside>
   <div class="toast" id="toast" role="status"></div>
 <script type="text/plain" id="email-tpl-en">Assistant in Japan
-Over-the-phone interpreting · Japanese ⇔ English · Japanese ⇔ Spanish
+{{TAGLINE}}
 
 Subject: Payment request — Invoice {{INVOICE_NO}} | Assistant in Japan
 
 Hello {{CUSTOMER_NAME}},
 
-Thank you for using our interpreting service. Below are the details of your recent call and how to pay. Payment is due within 7 days of the call.
+{{OPENING}}
 
 CALL SUMMARY
 Invoice number: {{INVOICE_NO}}
-Call date: {{CALL_DATE}}
+{{DATE_LABEL}}: {{CALL_DATE}}
 Languages: {{LANGUAGES}}
-Duration: {{MINUTES}} min
+Duration: {{DURATION}}
 
 PRICE
-Connection fee: ¥200
-{{MINUTES}} min × ¥95: {{MINUTE_TOTAL}}
-Minimum charge: ¥750 per call. If the amount above is lower, the total is ¥750.
+{{PRICE_BLOCK}}
 
 TOTAL: {{TOTAL}}
 Please pay by: {{DUE_DATE}}
@@ -439,24 +460,22 @@ Website: https://assistantinjapan.github.io
 This is an automatic email sent after your call. If you have already paid, please ignore this message. For any question, just reply or call us.
 </script>
 <script type="text/plain" id="email-tpl-es">Assistant in Japan
-Interpretación por teléfono · Japonés ⇔ Inglés · Japonés ⇔ Español
+{{TAGLINE}}
 
 Asunto: Solicitud de pago — Factura {{INVOICE_NO}} | Assistant in Japan
 
 Hola, {{CUSTOMER_NAME}}:
 
-Gracias por utilizar nuestro servicio de interpretación. A continuación encontrará los datos de su llamada reciente y las formas de pago. El plazo de pago es de 7 días desde la fecha de la llamada.
+{{OPENING}}
 
 RESUMEN DE LA LLAMADA
 Número de factura: {{INVOICE_NO}}
-Fecha de la llamada: {{CALL_DATE}}
+{{DATE_LABEL}}: {{CALL_DATE}}
 Idiomas: {{LANGUAGES}}
-Duración: {{MINUTES}} min
+Duración: {{DURATION}}
 
 PRECIO
-Cuota de conexión: ¥200
-{{MINUTES}} min × ¥95: {{MINUTE_TOTAL}}
-Cargo mínimo: ¥750 por llamada. Si el importe anterior es menor, el total es de ¥750.
+{{PRICE_BLOCK}}
 
 TOTAL: {{TOTAL}}
 Fecha límite de pago: {{DUE_DATE}}
@@ -498,24 +517,22 @@ Web: https://assistantinjapan.github.io
 Este es un correo automático enviado después de su llamada. Si ya ha efectuado el pago, ignore este mensaje. Si tiene cualquier duda, responda a este correo o llámenos.
 </script>
 <script type="text/plain" id="email-tpl-ja">Assistant in Japan
-電話通訳 · 日本語 ⇔ 英語 · 日本語 ⇔ スペイン語
+{{TAGLINE}}
 
 件名: お支払いのご案内 — 請求書番号 {{INVOICE_NO}} | Assistant in Japan
 
 {{CUSTOMER_NAME}} 様
 
-このたびは、当サービスの通訳をご利用いただき、ありがとうございます。以下に、今回の通話内容とお支払い方法をご案内します。お支払期限は、通話日の7日後です。
+{{OPENING}}
 
 通話の概要
 請求書番号: {{INVOICE_NO}}
-通話日: {{CALL_DATE}}
+{{DATE_LABEL}}: {{CALL_DATE}}
 言語: {{LANGUAGES}}
-通話時間: {{MINUTES}} 分
+時間: {{DURATION}}
 
 料金
-接続料: ¥200
-{{MINUTES}} 分 × ¥95: {{MINUTE_TOTAL}}
-最低料金: 1回の通話につき ¥750。上記の合計がこれを下回る場合、合計は ¥750 となります。
+{{PRICE_BLOCK}}
 
 合計: {{TOTAL}}
 お支払期限: {{DUE_DATE}}
@@ -560,7 +577,11 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
 <script src="html2pdf.bundle.min.js"></script>
 <script>
 (function () {
-  const FEE = 200, RATE = 95, MIN = 750;
+  const RATES = {
+    phone: { fee: 200, rate: 95, min: 750 },
+    video: { fee: 400, rate: 190, min: 1500 },
+    trip: { fee: 0, rate: 5000, min: 0 }
+  };
   const STORAGE_KEY = "aij-billing-settings-v1";
   const DEFAULT_SETTINGS = {
     paypalLink: "{{PAYPAL_LINK}}",
@@ -585,10 +606,14 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
       due: "Due date",
       minutesUnit: "min",
       connection: "Connection fee",
-      interpreting: function (n) { return "Interpreting — " + n + " min × ¥95"; },
+      interpreting: function (c) { return "Interpreting — " + c.minutes + " min × ¥" + c.rate; },
+      tripLine: function (c) {
+        if (c.quoted) return "Trip scheduling — quoted amount";
+        return "Trip scheduling — " + formatHours(c.hours) + " h × ¥" + c.rate;
+      },
       subtotal: "Subtotal",
       adjustment: "Minimum charge adjustment",
-      minNote: "Minimum charge: ¥750 per call.",
+      minNote: function (c) { return "Minimum charge: " + yen(c.minimum) + " per call. If the amount above is lower, the total is " + yen(c.minimum) + "."; },
       total: "Total",
       howToPay: "How to pay",
       payPaypal: "Cards accepted, no account needed.",
@@ -602,7 +627,17 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
         return "If we do not receive payment by " + due + ", we will send a reminder. If this invoice remains unpaid " + grace + " days after the due date, we will suspend all future interpreting services until the balance is paid in full. We may also refer the unpaid amount to a debt-collection agency or start a legal process to recover it. Any additional costs we reasonably incur to recover the debt may be charged to you, as permitted by law.";
       },
       thanks: "Thank you for using our interpreting service.",
-      tagline: "Over-the-phone interpreting · Japanese ⇔ English · Japanese ⇔ Spanish",
+      tagline: {
+        phone: "Phone interpreting · Japanese ⇔ English · Japanese ⇔ Spanish",
+        video: "Video call interpreting · Japanese ⇔ English · Japanese ⇔ Spanish",
+        trip: "Trip scheduling · Japanese ⇔ English · Japanese ⇔ Spanish"
+      },
+      dateLabel: { phone: "Call date", video: "Call date", trip: "Service date" },
+      opening: {
+        phone: "Thank you for using our phone interpreting service. Below are the details of your recent call and how to pay. Payment is due within 7 days of the call.",
+        video: "Thank you for using our video call interpreting service. Below are the details of your recent call and how to pay. Payment is due within 7 days of the call.",
+        trip: "Thank you for using our trip scheduling service. Below are the details of this booking and how to pay. Payment is due within 7 days."
+      },
       auto: "This bill was prepared by Assistant in Japan.",
       pair: { "JP-EN": "Japanese ⇔ English", "JP-ES": "Japanese ⇔ Spanish" }
     },
@@ -616,10 +651,14 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
       due: "Fecha límite de pago",
       minutesUnit: "min",
       connection: "Cuota de conexión",
-      interpreting: function (n) { return "Interpretación — " + n + " min × ¥95"; },
+      interpreting: function (c) { return "Interpretación — " + c.minutes + " min × ¥" + c.rate; },
+      tripLine: function (c) {
+        if (c.quoted) return "Planificación de viajes — importe presupuestado";
+        return "Planificación de viajes — " + formatHours(c.hours) + " h × ¥" + c.rate;
+      },
       subtotal: "Subtotal",
       adjustment: "Ajuste por cargo mínimo",
-      minNote: "Cargo mínimo: ¥750 por llamada.",
+      minNote: function (c) { return "Cargo mínimo: " + yen(c.minimum) + " por llamada. Si el importe anterior es menor, el total es de " + yen(c.minimum) + "."; },
       total: "Total",
       howToPay: "Cómo pagar",
       payPaypal: "Acepta tarjetas, no necesita una cuenta.",
@@ -633,7 +672,17 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
         return "Si no recibimos el pago el " + due + " o antes, le enviaremos un recordatorio. Si esta factura sigue sin pagar " + grace + " días después de la fecha límite, suspenderemos todos los servicios de interpretación futuros hasta que el saldo se abone por completo. También podremos ceder el importe impagado a una agencia de cobro de deudas o iniciar un proceso legal para reclamarlo. Los gastos adicionales en los que incurramos de forma razonable para recuperar la deuda podrán cargarse a usted, en la medida en que lo permita la ley.";
       },
       thanks: "Gracias por utilizar nuestro servicio de interpretación.",
-      tagline: "Interpretación por teléfono · Japonés ⇔ Inglés · Japonés ⇔ Español",
+      tagline: {
+        phone: "Interpretación por teléfono · Japonés ⇔ Inglés · Japonés ⇔ Español",
+        video: "Interpretación por videollamada · Japonés ⇔ Inglés · Japonés ⇔ Español",
+        trip: "Planificación de viajes · Japonés ⇔ Inglés · Japonés ⇔ Español"
+      },
+      dateLabel: { phone: "Fecha de la llamada", video: "Fecha de la llamada", trip: "Fecha del servicio" },
+      opening: {
+        phone: "Gracias por utilizar nuestro servicio de interpretación por teléfono. A continuación encontrará los datos de su llamada reciente y las formas de pago. El plazo de pago es de 7 días desde la fecha de la llamada.",
+        video: "Gracias por utilizar nuestro servicio de interpretación por videollamada. A continuación encontrará los datos de su llamada reciente y las formas de pago. El plazo de pago es de 7 días desde la fecha de la llamada.",
+        trip: "Gracias por utilizar nuestro servicio de planificación de viajes. A continuación encontrará los datos de esta reserva y las formas de pago. El plazo de pago es de 7 días."
+      },
       auto: "Esta factura ha sido emitida por Assistant in Japan.",
       pair: { "JP-EN": "Japonés ⇔ Inglés", "JP-ES": "Japonés ⇔ Español" }
     },
@@ -647,10 +696,14 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
       due: "お支払期限",
       minutesUnit: "分",
       connection: "接続料",
-      interpreting: function (n) { return "通訳 — " + n + "分 × ¥95"; },
+      interpreting: function (c) { return "通訳 — " + c.minutes + "分 × ¥" + c.rate; },
+      tripLine: function (c) {
+        if (c.quoted) return "旅程づくり — お見積り金額";
+        return "旅程づくり — " + formatHours(c.hours) + "時間 × ¥" + c.rate;
+      },
       subtotal: "小計",
       adjustment: "最低料金の調整",
-      minNote: "最低料金: 1回の通話につき ¥750。",
+      minNote: function (c) { return "最低料金: 1回の通話につき " + yen(c.minimum) + "。上記の合計がこれを下回る場合、合計は " + yen(c.minimum) + " となります。"; },
       total: "合計",
       howToPay: "お支払い方法",
       payPaypal: "クレジットカードでもお支払いいただけます。アカウントは不要です。",
@@ -664,7 +717,17 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
         return "期日（" + due + "）までにお支払いが確認できない場合は、ご請求の再案内をお送りします。期日から" + grace + "日を過ぎてもお支払いがない場合、未払いの残高が完済されるまで、今後の通訳サービスをすべて停止します。また、未払い金の回収を債権回収業者に委託する、または法的手続きを取る場合があります。回収に要した合理的な費用は、法令で認められる範囲でお客様のご負担となることがあります。";
       },
       thanks: "このたびは、当サービスの通訳をご利用いただき、ありがとうございました。",
-      tagline: "電話通訳 · 日本語 ⇔ 英語 · 日本語 ⇔ スペイン語",
+      tagline: {
+        phone: "電話通訳 · 日本語 ⇔ 英語 · 日本語 ⇔ スペイン語",
+        video: "ビデオ通話の通訳 · 日本語 ⇔ 英語 · 日本語 ⇔ スペイン語",
+        trip: "旅程づくり · 日本語 ⇔ 英語 · 日本語 ⇔ スペイン語"
+      },
+      dateLabel: { phone: "通話日", video: "通話日", trip: "ご利用日" },
+      opening: {
+        phone: "このたびは、電話通訳をご利用いただき、ありがとうございます。以下に、今回の通話内容とお支払い方法をご案内します。お支払期限は、ご利用日の7日後です。",
+        video: "このたびは、ビデオ通話の通訳をご利用いただき、ありがとうございます。以下に、今回の通話内容とお支払い方法をご案内します。お支払期限は、ご利用日の7日後です。",
+        trip: "このたびは、旅程づくりをご利用いただき、ありがとうございます。以下に、今回のご依頼内容とお支払い方法をご案内します。お支払期限は、ご利用日の7日後です。"
+      },
       auto: "本請求書は Assistant in Japan が作成しました。",
       pair: { "JP-EN": "日本語 ⇔ 英語", "JP-ES": "日本語 ⇔ スペイン語" }
     }
@@ -774,32 +837,69 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
     const el = document.querySelector('input[name="docLang"]:checked');
     return el ? el.value : "en";
   }
+  function serviceType(opts) {
+    if (opts && opts.service) return opts.service;
+    return $("service") ? $("service").value : "phone";
+  }
+  function formatHours(n) {
+    const r = Math.round(Number(n) * 100) / 100;
+    return String(r);
+  }
+  function parseNum(raw) {
+    if (raw == null || String(raw).trim() === "") return null;
+    const n = parseFloat(String(raw).replace(",", "."));
+    return isFinite(n) ? n : null;
+  }
 
   function calculate(opts) {
     opts = opts || {};
+    const svc = serviceType(opts);
+    const spec = RATES[svc] || RATES.phone;
+    if (svc === "trip") {
+      const custom = parseNum(opts.customAmount != null ? opts.customAmount : $("customAmount").value);
+      const hours = parseNum(opts.hours != null ? opts.hours : $("tripHours").value);
+      if (custom != null && custom > 0) {
+        const total = Math.round(custom);
+        return {
+          ok: true, service: "trip", quoted: true, hours: hours, seconds: null, crossed: false,
+          minutes: 0, minuteTotal: 0, subtotal: total, minimumApplied: false, adjustment: 0,
+          total: total, connectionFee: 0, rate: spec.rate, minimum: 0
+        };
+      }
+      if (hours == null || hours <= 0) return { error: "hours", ok: false, service: "trip" };
+      const total = Math.round(hours * spec.rate);
+      return {
+        ok: true, service: "trip", quoted: false, hours: hours, seconds: null, crossed: false,
+        minutes: 0, minuteTotal: total, subtotal: total, minimumApplied: false, adjustment: 0,
+        total: total, connectionFee: 0, rate: spec.rate, minimum: 0
+      };
+    }
     const useMode = opts.mode || mode();
     let minutes = 0, seconds = null, crossed = false;
     if (useMode === "manual") {
       const raw = opts.manualMinutes != null ? opts.manualMinutes : $("manualMinutes").value;
-      const n = parseFloat(String(raw).replace(",", "."));
-      if (!isFinite(n) || n < 0) return { error: "minutes", ok: false };
+      const n = parseNum(raw);
+      if (n == null || n < 0) return { error: "minutes", ok: false, service: svc };
       minutes = Math.ceil(n);
       if (n === 0) minutes = 0;
     } else {
       const start = opts.start != null ? opts.start : $("startTime").value;
       const end = opts.end != null ? opts.end : $("endTime").value;
       const d = durationSeconds(start, end);
-      if (!d) return { error: "time", ok: false };
+      if (!d) return { error: "time", ok: false, service: svc };
       seconds = d.seconds;
       crossed = d.crossed;
       minutes = billableFromSeconds(d.seconds);
     }
-    const minuteTotal = minutes * RATE;
-    const subtotal = FEE + minuteTotal;
-    const minimumApplied = subtotal < MIN;
-    const total = Math.max(subtotal, MIN);
+    const minuteTotal = minutes * spec.rate;
+    const subtotal = spec.fee + minuteTotal;
+    const minimumApplied = subtotal < spec.min;
+    const total = Math.max(subtotal, spec.min);
     return {
       ok: true,
+      service: svc,
+      quoted: false,
+      hours: null,
       minutes: minutes,
       seconds: seconds,
       crossed: crossed,
@@ -808,9 +908,9 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
       minimumApplied: minimumApplied,
       adjustment: total - subtotal,
       total: total,
-      connectionFee: FEE,
-      rate: RATE,
-      minimum: MIN
+      connectionFee: spec.fee,
+      rate: spec.rate,
+      minimum: spec.min
     };
   }
 
@@ -851,14 +951,52 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
     return out;
   }
 
+  function priceBlock(state) {
+    const lang = state.lang;
+    const t = T[lang];
+    const c = state.calc;
+    if (!c.ok) return "";
+    if (c.service === "trip") {
+      if (c.quoted) return t.tripLine(c) + ": " + yen(c.total);
+      return t.tripLine(c) + ": " + yen(c.total);
+    }
+    const unit = lang === "ja" ? " 分" : " min";
+    const times = lang === "ja" ? " × ¥" : " × ¥";
+    const conn = t.connection + ": " + yen(c.connectionFee);
+    const mins = c.minutes + unit + times + c.rate + ": " + yen(c.minuteTotal);
+    return conn + "\n" + mins + "\n" + t.minNote(c);
+  }
+  function durationText(state) {
+    const c = state.calc;
+    const lang = state.lang;
+    if (!c.ok) return "";
+    if (c.service === "trip") {
+      if (c.quoted && (c.hours == null || c.hours <= 0)) {
+        return lang === "ja" ? "お見積り" : (lang === "es" ? "Presupuesto" : "Quoted");
+      }
+      const h = formatHours(c.hours);
+      if (lang === "ja") return h + "時間";
+      if (lang === "es") return h + (Number(h) === 1 ? " hora" : " horas");
+      return h + (Number(h) === 1 ? " hour" : " hours");
+    }
+    return formatDuration(c.seconds, c.minutes, lang);
+  }
+
   function emailValues(state) {
     const lang = state.lang;
     const c = state.calc;
+    const t = T[lang];
+    const svc = c.service || "phone";
     return {
       CUSTOMER_NAME: state.customerName || "",
       CALL_DATE: formatDate(state.callDate, lang),
-      LANGUAGES: T[lang].pair[state.pair],
+      LANGUAGES: t.pair[state.pair],
       MINUTES: String(c.ok ? c.minutes : ""),
+      DURATION: c.ok ? durationText(state) : "",
+      DATE_LABEL: t.dateLabel[svc] || t.dateLabel.phone,
+      TAGLINE: t.tagline[svc] || t.tagline.phone,
+      OPENING: t.opening[svc] || t.opening.phone,
+      PRICE_BLOCK: c.ok ? priceBlock(state) : "",
       INVOICE_NO: state.invoiceNo,
       MINUTE_TOTAL: c.ok ? yen(c.minuteTotal) : "",
       TOTAL: c.ok ? yen(c.total) : "",
@@ -887,23 +1025,38 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
     if (c.ok && c.crossed) note.hidden = false;
     else note.hidden = true;
     if (!c.ok) {
-      $("live-body").innerHTML = '<p style="margin:0;color:#c9cee6;">Enter a start and end time, or switch to minutes, to see the total.</p>';
+      const msg = c.error === "hours"
+        ? "Enter the hours, or a custom quoted amount, to see the total."
+        : "Enter a start and end time, or switch to minutes, to see the total.";
+      $("live-body").innerHTML = '<p style="margin:0;color:#c9cee6;">' + msg + "</p>";
       return;
     }
-    const minLine = c.minimumApplied
-      ? '<tr class="min-on"><td>Minimum ¥750 applied</td><td>+ ' + yen(c.adjustment) + "</td></tr>"
-      : '<tr class="min-off"><td>Minimum ¥750</td><td>Not applied</td></tr>';
-    const actual = c.seconds != null
-      ? (Math.floor(c.seconds / 60) + " min " + (c.seconds % 60) + " sec → ")
-      : "";
+    let rows;
+    if (c.service === "trip") {
+      const label = c.quoted
+        ? "Quoted amount"
+        : (formatHours(c.hours) + " h × ¥" + c.rate);
+      rows =
+        "<tr><td>Trip scheduling</td><td>" + label + "</td></tr>" +
+        '<tr class="total-row"><td>Total</td><td>' + yen(c.total) + "</td></tr>";
+    } else {
+      const minLine = c.minimumApplied
+        ? '<tr class="min-on"><td>Minimum ¥' + c.minimum + ' applied</td><td>+ ' + yen(c.adjustment) + "</td></tr>"
+        : '<tr class="min-off"><td>Minimum ¥' + c.minimum + '</td><td>Not applied</td></tr>';
+      const actual = c.seconds != null
+        ? (Math.floor(c.seconds / 60) + " min " + (c.seconds % 60) + " sec → ")
+        : "";
+      rows =
+        "<tr><td>Billable minutes</td><td>" + actual + "<strong>" + c.minutes + "</strong></td></tr>" +
+        "<tr><td>Connection fee</td><td>" + yen(c.connectionFee) + "</td></tr>" +
+        "<tr><td>" + c.minutes + " min × ¥" + c.rate + "</td><td>" + yen(c.minuteTotal) + "</td></tr>" +
+        "<tr><td>Subtotal</td><td>" + yen(c.subtotal) + "</td></tr>" +
+        minLine +
+        '<tr class="total-row"><td>Total</td><td>' + yen(c.total) + "</td></tr>";
+    }
     $("live-body").innerHTML =
       "<table>" +
-      "<tr><td>Billable minutes</td><td>" + actual + "<strong>" + c.minutes + "</strong></td></tr>" +
-      "<tr><td>Connection fee</td><td>" + yen(c.connectionFee) + "</td></tr>" +
-      "<tr><td>" + c.minutes + " min × ¥95</td><td>" + yen(c.minuteTotal) + "</td></tr>" +
-      "<tr><td>Subtotal</td><td>" + yen(c.subtotal) + "</td></tr>" +
-      minLine +
-      '<tr class="total-row"><td>Total</td><td>' + yen(c.total) + "</td></tr>" +
+      rows +
       "</table>" +
       (state.dueDate ? '<p style="margin:10px 0 0;font-size:13px;color:#c9cee6;">Due ' + formatDate(state.dueDate, "en") + "</p>" : "");
   }
@@ -925,12 +1078,16 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
     }
     const due = formatDate(state.dueDate, lang);
     const call = formatDate(state.callDate, lang);
-    const lines = [
-      '<tr><td style="padding:7px 0;border-bottom:1px solid #efe9de;">' + esc(t.connection) + '</td><td style="padding:7px 0;border-bottom:1px solid #efe9de;text-align:right;white-space:nowrap;">' + yen(c.connectionFee) + "</td></tr>",
-      '<tr><td style="padding:7px 0;border-bottom:1px solid #efe9de;">' + esc(t.interpreting(c.minutes)) + '</td><td style="padding:7px 0;border-bottom:1px solid #efe9de;text-align:right;white-space:nowrap;">' + yen(c.minuteTotal) + "</td></tr>"
-    ];
-    if (c.minimumApplied) {
-      lines.push('<tr><td style="padding:7px 0;border-bottom:1px solid #efe9de;">' + esc(t.adjustment) + '</td><td style="padding:7px 0;border-bottom:1px solid #efe9de;text-align:right;white-space:nowrap;">' + yen(c.adjustment) + "</td></tr>");
+    const line = function (label, amount) {
+      return '<tr><td style="padding:7px 0;border-bottom:1px solid #efe9de;">' + esc(label) + '</td><td style="padding:7px 0;border-bottom:1px solid #efe9de;text-align:right;white-space:nowrap;">' + yen(amount) + "</td></tr>";
+    };
+    const lines = [];
+    if (c.service === "trip") {
+      lines.push(line(t.tripLine(c), c.total));
+    } else {
+      lines.push(line(t.connection, c.connectionFee));
+      lines.push(line(t.interpreting(c), c.minuteTotal));
+      if (c.minimumApplied) lines.push(line(t.adjustment, c.adjustment));
     }
     const emailLine = state.customerEmail ? "<br>" + esc(state.customerEmail) : "";
     sheet.innerHTML =
@@ -939,7 +1096,7 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
         '<div style="padding:16px 28px 14px;">' +
         '<div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#c9cee6;">' + esc(t.invoice) + "</div>" +
         '<div style="font-size:22px;font-weight:800;margin-top:2px;">Assistant in Japan</div>' +
-        '<div style="font-size:12px;color:#c9cee6;margin-top:2px;">' + esc(t.tagline) + "</div>" +
+        '<div style="font-size:12px;color:#c9cee6;margin-top:2px;">' + esc(t.tagline[c.service] || t.tagline.phone) + "</div>" +
         '<div style="font-size:12px;color:#fff;margin-top:10px;line-height:1.55;">' +
           '+81 90-6534-8689<br>assistantinjapan@gmail.com<br>https://assistantinjapan.github.io</div>' +
         "</div>" +
@@ -949,7 +1106,7 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
         '<div><div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#c53a2a;font-weight:700;">' + esc(t.invoice) + "</div>" +
         '<div style="font-size:20px;font-weight:800;color:#1a2148;">' + esc(state.invoiceNo || "—") + "</div></div>" +
         '<div style="text-align:right;font-size:13px;line-height:1.55;color:#1d2030;">' +
-          '<div><span style="color:#5a5f73;">' + esc(t.callDate) + ":</span> " + esc(call) + "</div>" +
+          '<div><span style="color:#5a5f73;">' + esc((t.dateLabel && t.dateLabel[c.service]) || t.callDate) + ":</span> " + esc(call) + "</div>" +
           '<div><span style="color:#5a5f73;">' + esc(t.due) + ":</span> <strong>" + esc(due) + "</strong></div>" +
         "</div>" +
       "</div>" +
@@ -957,11 +1114,11 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
         '<div style="flex:1;"><div style="color:#5a5f73;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">' + esc(t.billTo) + "</div>" +
         "<strong>" + esc(state.customerName || "—") + "</strong>" + emailLine + "</div>" +
         '<div style="flex:1;"><div style="color:#5a5f73;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">' + esc(t.languages) + "</div>" +
-        esc(t.pair[state.pair]) + "<br>" + esc(t.duration) + ": " + esc(formatDuration(c.seconds, c.minutes, lang)) + "</div>" +
+        esc(t.pair[state.pair]) + "<br>" + esc(c.service === "trip" ? (lang === "ja" ? "時間" : (lang === "es" ? "Duración" : "Duration")) : t.duration) + ": " + esc(durationText(state)) + "</div>" +
       "</div>" +
       '<table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:4px;">' +
         lines.join("") +
-        '<tr><td style="padding:12px 0 4px;font-size:13px;color:#5a5f73;">' + esc(t.minNote) + '</td><td></td></tr>' +
+        (c.service === "trip" ? "" : '<tr><td style="padding:12px 0 4px;font-size:13px;color:#5a5f73;">' + esc(t.minNote(c)) + '</td><td></td></tr>') +
         '<tr><td style="padding:8px 0 0;font-size:18px;font-weight:800;color:#1a2148;">' + esc(t.total) + '</td>' +
         '<td style="padding:8px 0 0;text-align:right;font-size:28px;font-weight:800;color:#c53a2a;">' + yen(c.total) + "</td></tr>" +
       "</table>" +
@@ -1032,6 +1189,24 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
       lab.classList.toggle("active", lab.querySelector("input").checked);
     });
   }
+  function syncServiceUI() {
+    const svc = serviceType();
+    const trip = svc === "trip";
+    $("call-duration").hidden = trip;
+    $("trip-fields").hidden = !trip;
+    const spec = RATES[svc];
+    $("price-hint").textContent = trip
+      ? "Trip scheduling: ¥5,000 per hour. Enter hours (decimals are fine), or type a custom quoted amount."
+      : ("Prices: connection ¥" + spec.fee + " + ¥" + spec.rate + " a minute. Minimum ¥" + spec.min + " per call. Billable time is rounded up to the next full minute.");
+    $("live-rule").textContent = trip
+      ? "Hours are billed as entered. A custom amount, if you type one, replaces the hourly total."
+      : "Billable minutes = call duration rounded up to the next full minute. Example: 10 minutes and 1 second is billed as 11 minutes.";
+  }
+  function durationError(calc) {
+    if (calc.error === "hours") return "Enter the hours, or a custom quoted amount.";
+    if (calc.error === "minutes") return "Please enter the minutes.";
+    return "Please enter a start and end time, or switch to minutes.";
+  }
   function syncLangUI() {
     document.querySelectorAll("#lang-seg label").forEach(function (lab) {
       lab.classList.toggle("active", lab.querySelector("input").checked);
@@ -1100,7 +1275,7 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
     if (!state.customerName) { setError("Please enter the customer name."); return; }
     if (!state.callDate) { setError("Please enter the call date."); return; }
     if (!state.calc.ok) {
-      setError(state.calc.error === "minutes" ? "Please enter the minutes." : "Please enter a start and end time, or switch to minutes.");
+      setError(durationError(state.calc));
       return;
     }
     setError("");
@@ -1125,7 +1300,7 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
   async function copyEmail() {
     const state = getState();
     if (!state.calc.ok) {
-      setError(state.calc.error === "minutes" ? "Please enter the minutes." : "Please enter a start and end time, or switch to minutes.");
+      setError(durationError(state.calc));
       return;
     }
     setError("");
@@ -1165,6 +1340,9 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
     if (data.start != null) $("startTime").value = data.start;
     if (data.end != null) $("endTime").value = data.end;
     if (data.manualMinutes != null) $("manualMinutes").value = data.manualMinutes;
+    if (data.service) { $("service").value = data.service; syncServiceUI(); }
+    if (data.hours != null) $("tripHours").value = data.hours;
+    if (data.customAmount != null) $("customAmount").value = data.customAmount;
     if (data.settings) {
       saveSettings(Object.assign({}, settings, data.settings));
       settingsToForm();
@@ -1185,10 +1363,14 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
     $("startTime").value = "";
     $("endTime").value = "";
     $("manualMinutes").value = "";
+    $("service").value = "phone";
+    $("tripHours").value = "";
+    $("customAmount").value = "";
     document.querySelector('input[name="mode"][value="times"]').checked = true;
     document.querySelector('input[name="docLang"][value="en"]').checked = true;
     setError("");
     syncModeUI();
+    syncServiceUI();
     syncLangUI();
     refresh();
   }
@@ -1222,7 +1404,8 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
   document.querySelectorAll('input[name="docLang"]').forEach(function (el) {
     el.addEventListener("change", function () { syncLangUI(); refresh(); });
   });
-  ["customerName","customerEmail","callDate","dueDate","invoiceNo","pair","startTime","endTime","manualMinutes"].forEach(function (id) {
+  $("service").addEventListener("change", function () { syncServiceUI(); refresh(); });
+  ["customerName","customerEmail","callDate","dueDate","invoiceNo","pair","startTime","endTime","manualMinutes","tripHours","customAmount"].forEach(function (id) {
     $(id).addEventListener("input", refresh);
     $(id).addEventListener("change", refresh);
   });
@@ -1231,7 +1414,7 @@ Este es un correo automático enviado después de su llamada. Si ya ha efectuado
   resetBill();
 
   window.__AIJ_BILLING = {
-    FEE: FEE, RATE: RATE, MIN: MIN,
+    RATES: RATES,
     calculate: calculate,
     getState: getState,
     fillForm: fillForm,
