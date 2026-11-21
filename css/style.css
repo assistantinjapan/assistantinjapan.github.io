@@ -401,7 +401,13 @@ html[lang="ja"] .eyebrow {
 
 /* Sections */
 .section { padding: 4.6rem 0; }
-.alt { background: var(--paper); }
+.alt {
+  background-color: var(--paper);
+  background-image: url("/img/illust-wave.svg");
+  background-repeat: repeat-x;
+  background-position: center bottom;
+  background-size: 320px auto;
+}
 .section-head { max-width: 42rem; margin-bottom: 2.3rem; }
 .section-head p { color: var(--muted); font-size: 1.08rem; }
 
@@ -444,24 +450,25 @@ html[lang="ja"] .eyebrow {
   display: grid;
   gap: 1.15rem;
 }
-@media (min-width: 900px) {
-  .steps { grid-template-columns: repeat(3, 1fr); }
+@media (min-width: 700px) {
+  .steps { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1100px) {
+  .steps { grid-template-columns: repeat(4, 1fr); }
 }
 .steps li {
   counter-increment: step;
   position: relative;
-  padding: 1.5rem 1.4rem 1.4rem 4.4rem;
+  padding: 1.35rem 1.2rem 1.3rem;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
 .steps li::before {
   content: counter(step);
-  position: absolute;
-  left: 1.2rem;
-  top: 1.45rem;
   width: 2.2rem;
   height: 2.2rem;
+  margin-bottom: 0.85rem;
   border-radius: 50%;
   background: var(--vermilion);
   color: #fff;
@@ -683,6 +690,184 @@ textarea { min-height: 148px; resize: vertical; }
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Japan illustrations — decorative only */
+.hero,
+.page-hero,
+.section {
+  position: relative;
+}
+.hero .wrap,
+.page-hero .wrap,
+.section > .wrap {
+  position: relative;
+  z-index: 1;
+}
+.deco {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.deco img {
+  position: absolute;
+  height: auto;
+  max-width: none;
+  user-select: none;
+}
+.deco-fuji { width: 300px; right: -24px; bottom: -18px; opacity: 0.14; }
+.deco-torii { width: 108px; left: 3%; top: 10%; opacity: 0.1; }
+.deco-blossom { width: 76px; right: 22%; top: 7%; opacity: 0.18; }
+.deco-blossom-sm { width: 46px; left: 38%; bottom: 10%; opacity: 0.14; }
+.deco-lantern { width: 64px; left: 6%; bottom: 8%; opacity: 0.12; }
+.deco-pagoda { width: 92px; right: 4%; top: 8%; opacity: 0.11; }
+.deco-train { width: 240px; left: -12px; bottom: 6%; opacity: 0.1; }
+.page-hero .deco-fuji { width: 220px; opacity: 0.12; }
+.page-hero .deco-blossom { width: 58px; right: 8%; top: 18%; }
+
+@media (max-width: 480px) {
+  .header .wrap { width: calc(100% - 1.2rem); gap: 0.35rem; }
+  .header-tools { gap: 0.28rem; }
+  .brand { font-size: 0.88rem; gap: 0.35rem; }
+  .brand img,
+  .brand svg.mark { width: 30px; height: 30px; }
+  .lang { padding: 2px; }
+  .lang a { padding: 0.16rem 0.38rem; font-size: 0.7rem; }
+}
+@media (max-width: 699px) {
+  .deco-torii,
+  .deco-train,
+  .deco-pagoda,
+  .deco-lantern,
+  .deco-blossom-sm { display: none; }
+  .deco-fuji { width: 168px; right: -36px; bottom: -8px; opacity: 0.1; }
+  .deco-blossom { width: 44px; opacity: 0.14; }
+  .alt { background-size: 280px auto; }
+}
+
+/* Pricing */
+.price-board {
+  display: grid;
+  gap: 1.15rem;
+}
+.price-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+@media (min-width: 760px) {
+  .price-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.price-grid li {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--vermilion);
+  border-radius: var(--radius);
+  padding: 1.15rem 1.15rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.price-kicker {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+html[lang="ja"] .price-kicker { letter-spacing: 0.12em; }
+.price-grid strong {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  color: var(--indigo);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.price-grid span:last-child {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.price-examples {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+  display: grid;
+  gap: 0.45rem;
+}
+.price-examples p { margin: 0; color: var(--ink); }
+.price-yen {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+.price-examples .price-yen {
+  margin-top: 0.15rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--line);
+}
+.price-summary {
+  margin-top: 2.8rem;
+}
+.prose h2:first-child { margin-top: 0; }
+.price-summary .price-board { margin-top: 0.4rem; }
+
+/* Payment methods */
+.pay-methods {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0.8rem;
+  display: grid;
+  gap: 0.75rem;
+}
+@media (min-width: 700px) {
+  .pay-methods { grid-template-columns: 1fr 1fr; }
+}
+.pay-methods li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.85rem;
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+.pay-badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--indigo);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.86rem;
+  letter-spacing: 0.01em;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem 0.35rem 0.45rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+.pay-badge svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.pay-methods p {
+  margin: 0;
+  flex: 1 1 14rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.pay-ask {
+  margin-top: 0.4rem;
+  font-weight: 650;
+  color: var(--indigo);
 }
 
 /* Header call: one visible instance per breakpoint */
