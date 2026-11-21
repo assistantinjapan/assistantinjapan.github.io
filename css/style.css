@@ -670,7 +670,14 @@ textarea { min-height: 148px; resize: vertical; }
   font-size: 0.9rem;
   line-height: 1.4;
 }
-.avail.is-closed { border-radius: 16px; }
+.avail.is-closed,
+.avail.has-note { border-radius: 16px; }
+.avail-note {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--ink);
+  font-size: 0.82rem;
+}
 .avail-dot {
   width: 0.65rem;
   height: 0.65rem;

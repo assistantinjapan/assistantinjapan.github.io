@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="color-scheme" content="light">
+  <title>Availability — Assistant in Japan</title>
+  <style>
+    :root {
+      --indigo: #1a2148;
+      --indigo-2: #2b3570;
+      --vermilion: #c53a2a;
+      --vermilion-dark: #9e2e22;
+      --paper: #f7f3ec;
+      --white: #fffdf9;
+      --ink: #1d2030;
+      --muted: #5a5f73;
+      --line: #e3ddd2;
+      --ok: #1f6b4a;
+      --font: "Noto Sans CJK JP", "Noto Sans JP", "Hiragino Sans", "Yu Gothic", "Segoe UI", Arial, Helvetica, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    .top { background: var(--indigo); color: #fff; border-bottom: 4px solid var(--vermilion); }
+    .top-inner { max-width: 720px; margin: 0 auto; padding: 14px 16px; }
+    .eyebrow { margin: 0; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #c9cee6; }
+    h1 { margin: 2px 0 0; font-size: 22px; letter-spacing: -0.02em; }
+    .sub { margin: 2px 0 0; font-size: 13px; color: #c9cee6; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 16px; display: grid; gap: 14px; }
+    .card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    h2 { margin: 0 0 6px; font-size: 17px; color: var(--indigo); }
+    .hint { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+    label { display: block; font-weight: 650; font-size: 13px; color: var(--indigo); margin: 0 0 4px; }
+    .field { margin-bottom: 12px; }
+    input[type="password"], input[type="text"], input[type="datetime-local"], textarea {
+      width: 100%;
+      font: inherit;
+      font-size: 16px;
+      padding: 10px 12px;
+      border: 1.5px solid #cfc8bb;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+    }
+    textarea { min-height: 72px; resize: vertical; }
+    input:focus, textarea:focus { outline: 3px solid var(--vermilion); outline-offset: 1px; border-color: var(--indigo); }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    button {
+      font: inherit;
+      font-weight: 700;
+      font-size: 16px;
+      border: 0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      cursor: pointer;
+      min-height: 48px;
+    }
+    .btn-primary { background: var(--vermilion); color: #fff; }
+    .btn-primary:hover { background: var(--vermilion-dark); }
+    .btn-ghost { background: #fff; color: var(--indigo); border: 1.5px solid var(--indigo); }
+    .btn-light { background: #fff; color: var(--indigo); border: 1px solid #9aa0c3; }
+    .stack { display: grid; gap: 8px; }
+    .choice {
+      width: 100%;
+      text-align: left;
+      background: #fff;
+      color: var(--indigo);
+      border: 1.5px solid var(--line);
+    }
+    .choice[aria-pressed="true"] {
+      background: var(--indigo);
+      color: #fff;
+      border-color: var(--indigo);
+    }
+    .choice.small { font-size: 15px; min-height: 44px; }
+    .live {
+      background: var(--indigo);
+      color: #fff;
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .live h2 { color: #fff; }
+    .live p { margin: 6px 0; color: #d8dced; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      color: var(--indigo);
+      border-radius: 999px;
+      padding: 6px 12px 6px 8px;
+      font-weight: 700;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); }
+    .dot.off { background: #8d4a46; }
+    .msg { min-height: 1.3em; font-weight: 650; margin: 10px 0 0; }
+    .msg.ok { color: var(--ok); }
+    .msg.err { color: var(--vermilion); }
+    .msg.info { color: var(--indigo); }
+    details { margin-top: 4px; }
+    summary { cursor: pointer; font-weight: 700; color: var(--indigo); }
+    details p, details li { color: var(--ink); font-size: 14px; }
+    code { font-size: 0.92em; }
+    a { color: var(--indigo-2); }
+    @media (min-width: 720px) {
+      .chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <p class="eyebrow">Owner only · bookmark this page</p>
+      <h1>Availability</h1>
+      <p class="sub">Assistant in Japan · not linked from the public site</p>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="live" id="live-card" aria-live="polite">
+      <h2>Live on the site</h2>
+      <p><span class="pill" id="live-pill"><span class="dot" id="live-dot"></span><span id="live-state">Checking…</span></span></p>
+      <p id="live-meta">Reading status.json…</p>
+    </section>
+
+    <section class="card">
+      <h2>Connect</h2>
+      <p class="hint">Paste a GitHub token once. It stays in this browser only. It is never saved in the repository.</p>
+      <div class="field">
+        <label for="token">GitHub token</label>
+        <input id="token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…">
+      </div>
+      <div class="actions">
+        <button type="button" class="btn-primary" id="btn-connect">Connect</button>
+        <button type="button" class="btn-ghost" id="btn-forget">Forget token</button>
+      </div>
+      <p class="msg" id="connect-msg" role="status"></p>
+      <details>
+        <summary>First-time setup</summary>
+        <ol>
+          <li>Create a fine-grained token at <a href="https://github.com/settings/personal-access-tokens/new">github.com/settings/personal-access-tokens/new</a>.</li>
+          <li>Resource owner: <strong>assistantinjapan</strong>.</li>
+          <li>Repository access: <strong>Only select repositories</strong> → <strong>assistantinjapan.github.io</strong>.</li>
+          <li>Repository permissions: <strong>Contents = Read and write</strong>. Nothing else.</li>
+          <li>Choose an expiration, generate the token, and paste it here.</li>
+        </ol>
+        <p>Bookmark <code>/admin/</code>. It is not in the menu or the sitemap.</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>Set the badge</h2>
+      <p class="hint">Automatic follows the daily hours: off from midnight to 4:59 Japan time, on the rest of the day. The other two buttons force the badge until you change it, or until the time you pick.</p>
+      <div class="stack" role="group" aria-label="Mode">
+        <button type="button" class="choice" id="mode-auto" data-mode="auto" aria-pressed="true">Automatic (schedule)</button>
+        <button type="button" class="choice" id="mode-on" data-mode="available" aria-pressed="false">Available now</button>
+        <button type="button" class="choice" id="mode-off" data-mode="unavailable" aria-pressed="false">Not available now</button>
+      </div>
+
+      <div id="until-block" style="margin-top:16px">
+        <label>Until (optional)</label>
+        <p class="hint" id="until-preview">No end time. A forced status stays until you change it.</p>
+        <div class="chips stack" role="group" aria-label="Until">
+          <button type="button" class="choice small" data-until="none" aria-pressed="true">No end time</button>
+          <button type="button" class="choice small" data-until="1h" aria-pressed="false">1 hour</button>
+          <button type="button" class="choice small" data-until="3h" aria-pressed="false">3 hours</button>
+          <button type="button" class="choice small" data-until="eod" aria-pressed="false">End of today</button>
+          <button type="button" class="choice small" data-until="tomorrow9" aria-pressed="false">Tomorrow 9:00 JST</button>
+          <button type="button" class="choice small" data-until="custom" aria-pressed="false">Custom time</button>
+        </div>
+        <div class="field" id="custom-wrap" hidden style="margin-top:10px">
+          <label for="custom-until">Custom end (Japan time)</label>
+          <input id="custom-until" type="datetime-local">
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:14px">
+        <label for="note">Note (optional)</label>
+        <textarea id="note" maxlength="180" placeholder="Short plain-text note for the badge"></textarea>
+      </div>
+      <button type="button" class="btn-primary" id="btn-save" style="width:100%">Save</button>
+      <p class="msg" id="save-msg" role="status"></p>
+    </section>
+  </main>
+  <script>
+  (function () {
+    "use strict";
+    var TOKEN_KEY = "aij-admin-github-token";
+    var API = "https://api.github.com/repos/assistantinjapan/assistantinjapan.github.io/contents/status.json";
+    var LIVE = "/status.json";
+    var mode = "auto";
+    var untilChoice = "none";
+    var pollTimer = null;
+
+    function $(id) { return document.getElementById(id); }
+
+    function jstParts(date) {
+      var fmt = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Tokyo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23"
+      });
+      var out = { year: 0, month: 0, day: 0, hour: 0, minute: 0 };
+      fmt.formatToParts(date).forEach(function (part) {
+        if (part.type === "year" || part.type === "month" || part.type === "day" || part.type === "hour" || part.type === "minute") {
+          out[part.type] = parseInt(part.value, 10);
+        }
+      });
+      if (out.hour === 24) out.hour = 0;
+      return out;
+    }
+
+    function jstDate(year, month, day, hour, minute) {
+      return new Date(Date.UTC(year, month - 1, day, hour - 9, minute, 0));
+    }
+
+    function computeUntil(now) {
+      if (mode === "auto" || untilChoice === "none") return null;
+      if (untilChoice === "1h") return new Date(now.getTime() + 60 * 60 * 1000);
+      if (untilChoice === "3h") return new Date(now.getTime() + 3 * 60 * 60 * 1000);
+      var p = jstParts(now);
+      if (untilChoice === "eod") return jstDate(p.year, p.month, p.day + 1, 0, 0);
+      if (untilChoice === "tomorrow9") return jstDate(p.year, p.month, p.day + 1, 9, 0);
+      if (untilChoice === "custom") {
+        var value = $("custom-until").value;
+        var match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(value);
+        if (!match) return null;
+        return jstDate(+match[1], +match[2], +match[3], +match[4], +match[5]);
+      }
+      return null;
+    }
+
+    function formatJst(iso) {
+      if (!iso) return "no end time";
+      var date = new Date(iso);
+      if (isNaN(date.getTime())) return String(iso);
+      return new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Tokyo",
+        day: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23"
+      }).format(date) + " JST";
+    }
+
+    function badgeState(record, now) {
+      now = now || new Date();
+      var active = record;
+      if (record && record.until) {
+        var untilMs = Date.parse(record.until);
+        if (!isNaN(untilMs) && untilMs <= now.getTime()) active = { mode: "auto", note: record.note };
+      }
+      var chosen = active && (active.mode === "available" || active.mode === "unavailable") ? active.mode : "auto";
+      if (chosen === "auto") return jstParts(now).hour < 5 ? "unavailable" : "available";
+      return chosen;
+    }
+
+    function paintLive(record, extra) {
+      var state = badgeState(record);
+      var open = state === "available";
+      $("live-state").textContent = open ? "Interpreters available" : "Interpreters not available";
+      $("live-dot").className = open ? "dot" : "dot off";
+      var modeLabel = record && record.mode ? record.mode : "auto";
+      var bits = ["File mode: " + modeLabel];
+      if (record && record.until) bits.push("until " + formatJst(record.until));
+      if (record && record.note) bits.push("note: " + (typeof record.note === "string" ? record.note : "translated note"));
+      if (record && record.updated) bits.push("updated " + formatJst(record.updated));
+      if (extra) bits.push(extra);
+      $("live-meta").textContent = bits.join(" · ");
+    }
+
+    function setMsg(id, text, kind) {
+      var el = $(id);
+      el.textContent = text || "";
+      el.className = "msg" + (kind ? " " + kind : "");
+    }
+
+    function storedToken() {
+      try { return localStorage.getItem(TOKEN_KEY) || ""; }
+      catch (err) { return ""; }
+    }
+
+    function rememberToken(token) {
+      try { localStorage.setItem(TOKEN_KEY, token); }
+      catch (err) { /* private mode */ }
+    }
+
+    function forgetToken() {
+      try { localStorage.removeItem(TOKEN_KEY); }
+      catch (err) { /* ignore */ }
+      $("token").value = "";
+      setMsg("connect-msg", "Token removed from this browser.", "info");
+    }
+
+    function tokenToUse() {
+      var typed = $("token").value.trim();
+      if (typed) {
+        rememberToken(typed);
+        $("token").value = "";
+        return typed;
+      }
+      return storedToken();
+    }
+
+    function ghHeaders(token) {
+      return {
+        Accept: "application/vnd.github+json",
+        Authorization: "Bearer " + token,
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "assistantinjapan-availability"
+      };
+    }
+
+    function explainStatus(status) {
+      if (status === 401) return "The token is wrong or expired.";
+      if (status === 403 || status === 404) return "The token cannot read or update this repository. Contents must be Read and write on assistantinjapan.github.io.";
+      return "GitHub returned " + status + ".";
+    }
+
+    function encodeContent(obj) {
+      var json = JSON.stringify(obj, null, 2) + "\n";
+      return btoa(unescape(encodeURIComponent(json)));
+    }
+
+    function selectMode(next) {
+      mode = next;
+      document.querySelectorAll("[data-mode]").forEach(function (btn) {
+        btn.setAttribute("aria-pressed", btn.getAttribute("data-mode") === next ? "true" : "false");
+      });
+      $("until-block").hidden = next === "auto";
+      updatePreview();
+    }
+
+    function selectUntil(next) {
+      untilChoice = next;
+      document.querySelectorAll("[data-until]").forEach(function (btn) {
+        btn.setAttribute("aria-pressed", btn.getAttribute("data-until") === next ? "true" : "false");
+      });
+      $("custom-wrap").hidden = next !== "custom";
+      updatePreview();
+    }
+
+    function updatePreview() {
+      if (mode === "auto") {
+        $("until-preview").textContent = "Automatic mode ignores an end time.";
+        return;
+      }
+      if (untilChoice === "custom" && !$("custom-until").value) {
+        $("until-preview").textContent = "Pick a Japan-time end, or choose another option.";
+        return;
+      }
+      var until = computeUntil(new Date());
+      $("until-preview").textContent = until
+        ? "Reverts to automatic at " + formatJst(until.toISOString()) + "."
+        : "No end time. A forced status stays until you change it.";
+    }
+
+    function loadPublic() {
+      return fetch(LIVE + "?t=" + Date.now(), { cache: "no-store" })
+        .then(function (response) {
+          if (!response.ok) throw new Error(String(response.status));
+          return response.json();
+        })
+        .then(function (data) {
+          paintLive(data);
+          return data;
+        })
+        .catch(function () {
+          $("live-state").textContent = "Could not read status.json";
+          $("live-meta").textContent = "The badge falls back to the daily schedule if this file cannot be read.";
+          return null;
+        });
+    }
+
+    function sameStatus(a, b) {
+      if (!a || !b) return false;
+      var noteA = a.note == null ? null : (typeof a.note === "string" ? a.note : JSON.stringify(a.note));
+      var noteB = b.note == null ? null : (typeof b.note === "string" ? b.note : JSON.stringify(b.note));
+      return a.mode === b.mode && (a.until || null) === (b.until || null) && noteA === noteB;
+    }
+
+    function pollLive(expected) {
+      if (pollTimer) clearInterval(pollTimer);
+      var started = Date.now();
+      pollTimer = setInterval(function () {
+        fetch(LIVE + "?t=" + Date.now(), { cache: "no-store" })
+          .then(function (response) { return response.ok ? response.json() : null; })
+          .then(function (data) {
+            if (data) paintLive(data);
+            if (sameStatus(data, expected)) {
+              clearInterval(pollTimer);
+              pollTimer = null;
+              setMsg("save-msg", "Saved. It is live on the site.", "ok");
+              paintLive(data, "live");
+            } else if (Date.now() - started > 150000) {
+              clearInterval(pollTimer);
+              pollTimer = null;
+              setMsg("save-msg", "Saved to GitHub. The site has not shown it yet. Check again in a minute.", "info");
+            }
+          })
+          .catch(function () { /* keep waiting */ });
+      }, 10000);
+    }
+
+    function connect() {
+      var token = tokenToUse();
+      if (!token) {
+        setMsg("connect-msg", "Paste a token first.", "err");
+        return;
+      }
+      setMsg("connect-msg", "Checking the token…", "info");
+      fetch(API, { headers: ghHeaders(token) })
+        .then(function (response) {
+          if (!response.ok) throw new Error(String(response.status));
+          setMsg("connect-msg", "Token works on this browser.", "ok");
+        })
+        .catch(function (err) {
+          var status = parseInt(err.message, 10);
+          setMsg("connect-msg", status ? explainStatus(status) : "Could not reach GitHub.", "err");
+        });
+    }
+
+    function save() {
+      var token = tokenToUse();
+      if (!token) {
+        setMsg("save-msg", "Connect a token first.", "err");
+        return;
+      }
+      if (mode !== "auto" && untilChoice === "custom" && !$("custom-until").value) {
+        setMsg("save-msg", "Choose a custom Japan time, or pick another end option.", "err");
+        return;
+      }
+      var untilDate = computeUntil(new Date());
+      var note = $("note").value.trim();
+      var payload = {
+        mode: mode,
+        until: untilDate ? untilDate.toISOString() : null,
+        note: note || null,
+        updated: new Date().toISOString()
+      };
+      setMsg("save-msg", "Saving…", "info");
+      fetch(API, { headers: ghHeaders(token) })
+        .then(function (response) {
+          if (!response.ok) throw new Error(String(response.status));
+          return response.json();
+        })
+        .then(function (current) {
+          return fetch(API, {
+            method: "PUT",
+            headers: Object.assign({ "Content-Type": "application/json" }, ghHeaders(token)),
+            body: JSON.stringify({
+              message: "Update availability",
+              content: encodeContent(payload),
+              sha: current.sha
+            })
+          });
+        })
+        .then(function (response) {
+          if (response.status === 409) throw new Error("409");
+          if (!response.ok) throw new Error(String(response.status));
+          paintLive(payload, "saved, waiting for the site");
+          setMsg("save-msg", "Saved. It goes live on the site in about 1–2 minutes.", "ok");
+          pollLive(payload);
+        })
+        .catch(function (err) {
+          var status = parseInt(err.message, 10);
+          if (status === 409) {
+            setMsg("save-msg", "GitHub had a newer copy. Press Save once more.", "err");
+            return;
+          }
+          setMsg("save-msg", status ? explainStatus(status) : "Could not reach GitHub.", "err");
+        });
+    }
+
+    document.querySelectorAll("[data-mode]").forEach(function (btn) {
+      btn.addEventListener("click", function () { selectMode(btn.getAttribute("data-mode")); });
+    });
+    document.querySelectorAll("[data-until]").forEach(function (btn) {
+      btn.addEventListener("click", function () { selectUntil(btn.getAttribute("data-until")); });
+    });
+    $("custom-until").addEventListener("input", updatePreview);
+    $("btn-connect").addEventListener("click", connect);
+    $("btn-forget").addEventListener("click", forgetToken);
+    $("btn-save").addEventListener("click", save);
+
+    if (storedToken()) setMsg("connect-msg", "A token is saved in this browser.", "info");
+    selectMode("auto");
+    selectUntil("none");
+    loadPublic();
+  })();
+  </script>
+</body>
+</html>

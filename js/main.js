@@ -1,8 +1,12 @@
 (function () {
   "use strict";
 
-  /* Force the badge without looking at the clock.
-     null uses Japan time. 'available' or 'unavailable' overrides it. */
+  /* AVAILABILITY_OVERRIDE is the highest priority. Leave it null on the live site.
+     null: follow /status.json. That file is what /admin/ writes.
+       mode "auto": unavailable 00:00–04:59 JST, available otherwise.
+       mode "available" or "unavailable": forced, until "until" if that time has passed.
+     'available' or 'unavailable': ignore status.json and the clock.
+     A failed fetch of status.json falls back to the automatic schedule. */
   var AVAILABILITY_OVERRIDE = null; // 'available' | 'unavailable'
 
   var COPY = {
@@ -32,6 +36,8 @@
     }
   };
 
+  var remote = null;
+
   function locale() {
     var lang = (document.documentElement.getAttribute("lang") || "en").toLowerCase();
     if (lang.indexOf("ja") === 0) return "ja";
@@ -56,27 +62,59 @@
     return { hour: hour, minute: minute };
   }
 
-  /* Not available 00:00–04:59 JST. Available 05:00–23:59 JST. */
-  function statusFor(date) {
-    if (AVAILABILITY_OVERRIDE === "available" || AVAILABILITY_OVERRIDE === "unavailable") {
-      return AVAILABILITY_OVERRIDE;
+  function scheduleStatus(date) {
+    return japanClock(date).hour < 5 ? "unavailable" : "available";
+  }
+
+  function noteText(note, lang) {
+    if (!note) return "";
+    if (typeof note === "string") return note;
+    if (typeof note === "object") {
+      if (typeof note[lang] === "string" && note[lang]) return note[lang];
+      if (typeof note.en === "string") return note.en;
     }
-    var clock = japanClock(date || new Date());
-    if (clock.hour < 5) return "unavailable";
-    return "available";
+    return "";
+  }
+
+  /* record: status.json object, or null when the file could not be read. */
+  function resolveStatus(record, date) {
+    var now = date || new Date();
+    if (AVAILABILITY_OVERRIDE === "available" || AVAILABILITY_OVERRIDE === "unavailable") {
+      return { state: AVAILABILITY_OVERRIDE, mode: "override", note: null, expired: false };
+    }
+    var mode = "auto";
+    var note = null;
+    var expired = false;
+    if (record && typeof record === "object") {
+      var untilMs = record.until ? Date.parse(record.until) : NaN;
+      expired = !!(record.until && !isNaN(untilMs) && untilMs <= now.getTime());
+      if (!expired && (record.mode === "available" || record.mode === "unavailable" || record.mode === "auto")) {
+        mode = record.mode;
+      }
+      note = record.note || null;
+    }
+    var state = mode === "auto" ? scheduleStatus(now) : mode;
+    return { state: state, mode: mode, note: note, expired: expired };
   }
 
   function renderAvailability(date) {
     var el = document.querySelector("[data-avail]");
     if (!el) return;
     var text = COPY[locale()];
-    var status = statusFor(date || new Date());
-    var open = status === "available";
+    var resolved = resolveStatus(remote, date || new Date());
+    var open = resolved.state === "available";
+    var extra = noteText(resolved.note, locale());
     el.classList.toggle("is-open", open);
     el.classList.toggle("is-closed", !open);
+    el.classList.toggle("has-note", !!extra);
     var label = el.querySelector(".avail-label");
+    var noteEl = el.querySelector(".avail-note");
     var detail = el.querySelector(".avail-detail");
     if (label) label.textContent = open ? text.available : text.unavailable;
+    if (noteEl) {
+      noteEl.hidden = !extra;
+      noteEl.textContent = extra;
+    }
     if (detail) {
       detail.hidden = open;
       if (!open) {
@@ -90,6 +128,22 @@
     }
   }
 
+  function refresh() {
+    return fetch("/status.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (response) {
+        if (!response.ok) throw new Error(String(response.status));
+        return response.json();
+      })
+      .then(function (data) {
+        remote = data;
+        renderAvailability(new Date());
+      })
+      .catch(function () {
+        remote = null;
+        renderAvailability(new Date());
+      });
+  }
+
   function mountAvailability() {
     if (document.querySelector("[data-avail]")) return;
     var el = document.createElement("div");
@@ -97,16 +151,22 @@
     el.setAttribute("data-avail", "");
     el.setAttribute("role", "status");
     el.setAttribute("aria-live", "polite");
-    el.innerHTML = '<span class="avail-dot" aria-hidden="true"></span><span class="avail-text"><strong class="avail-label"></strong><span class="avail-detail" hidden></span></span>';
+    el.innerHTML = '<span class="avail-dot" aria-hidden="true"></span><span class="avail-text"><strong class="avail-label"></strong><span class="avail-note" hidden></span><span class="avail-detail" hidden></span></span>';
     document.body.appendChild(el);
     renderAvailability(new Date());
-    setInterval(function () { renderAvailability(new Date()); }, 60000);
+    refresh();
+    setInterval(refresh, 60000);
   }
 
   window.AIJAvailability = {
-    statusFor: statusFor,
+    statusFor: function (date, record) {
+      if (arguments.length > 1) return resolveStatus(record, date || new Date()).state;
+      return resolveStatus(remote, date || new Date()).state;
+    },
+    resolve: resolveStatus,
     japanClock: japanClock,
-    render: renderAvailability
+    render: renderAvailability,
+    refresh: refresh
   };
 
   mountAvailability();
