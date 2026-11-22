@@ -18,8 +18,8 @@
   --radius: 16px;
   --max: 1120px;
   --header: 68px;
-  --font: "Source Sans 3", "Noto Sans JP", "Hiragino Sans", "Yu Gothic", ui-sans-serif, system-ui, sans-serif;
-  --serif: "Source Serif 4", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", Georgia, "Times New Roman", serif;
+  --font: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", ui-sans-serif, system-ui, sans-serif;
+  --serif: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", Georgia, "Times New Roman", serif;
   --space: 1.15rem;
 }
 
@@ -147,6 +147,9 @@ html[lang="ja"] .eyebrow {
 }
 .topbar a:hover { text-decoration: underline; color: #fff; }
 .topbar svg { width: 14px; height: 14px; flex: none; }
+@media (max-width: 480px) {
+  .topbar { display: none; }
+}
 
 /* Header */
 .header {
@@ -699,6 +702,14 @@ textarea { min-height: 148px; resize: vertical; }
   font-size: 0.82rem;
 }
 .avail-detail a { font-weight: 700; }
+.hero .avail {
+  position: static;
+  left: auto;
+  bottom: auto;
+  margin: 0.9rem 0 0;
+  max-width: 100%;
+  z-index: 1;
+}
 @media (max-width: 899px) {
   .avail {
     left: 0.55rem;
@@ -707,7 +718,53 @@ textarea { min-height: 148px; resize: vertical; }
     max-width: min(17.5rem, calc(100% - 1.1rem));
     font-size: 0.82rem;
   }
+  .hero .avail {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    margin: 0.9rem 0 0;
+    max-width: 100%;
+  }
 }
+.minute-samples {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+@media (min-width: 700px) {
+  .minute-samples { grid-template-columns: repeat(3, 1fr); }
+}
+.minute-samples li {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  display: grid;
+  gap: 0.15rem;
+}
+.minute-samples strong {
+  font-family: var(--serif);
+  font-size: 1.55rem;
+  color: var(--indigo);
+  font-weight: 700;
+}
+.minute-samples em {
+  font-style: normal;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.faq details {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  margin: 0 0 0.7rem;
+}
+.faq summary { cursor: pointer; font-weight: 700; color: var(--indigo); }
+.faq details p { margin: 0.55rem 0 0; color: var(--muted); }
 
 /* Sticky mobile call bar */
 .callbar {
