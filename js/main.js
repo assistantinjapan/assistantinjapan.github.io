@@ -152,7 +152,9 @@
     el.setAttribute("role", "status");
     el.setAttribute("aria-live", "polite");
     el.innerHTML = '<span class="avail-dot" aria-hidden="true"></span><span class="avail-text"><strong class="avail-label"></strong><span class="avail-note" hidden></span><span class="avail-detail" hidden></span></span>';
-    document.body.appendChild(el);
+    var actions = document.querySelector(".hero .actions");
+    if (actions && actions.parentNode) actions.insertAdjacentElement("afterend", el);
+    else document.body.appendChild(el);
     renderAvailability(new Date());
     refresh();
     setInterval(refresh, 60000);
